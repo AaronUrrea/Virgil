@@ -1,0 +1,15 @@
+{
+  "name": "virgil",
+  "version": "1.0.0",
+  "description": "The official bot of the 111th Manticore Company.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aaron Urrea",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "fs": "0.0.1-security"
+  }
+}
