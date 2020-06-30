@@ -36,9 +36,22 @@ module.exports.run = async (bot, message, args) => {
     try {
         channelOrigin.createWebhook('Virgil');
         const webhooks = await channelOrigin.fetchWebhooks();
-         const webhook = await webhooks.first();
+        const webhook = await webhooks.first();
 
-         console.log("Creating temporary Webhook: " + webhook.name + " @ " + channelOrigin.name);
+        console.log("\nCreating temporary Webhook: " + webhook.name + " @ " + channelOrigin.name);
+
+
+        let sent = await message.channel.send(new Discord.MessageEmbed()
+                .setColor('#ff9900')
+                .setTitle('111th Manticore Company')
+                .setDescription('Accessing Gallery Now . . .')
+                .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
+                .setAuthor('UNSC', 'attachment://UNSC.png')
+                .setThumbnail('attachment://Manticore.png'))
+        .then(console.log("Accessing Gallery."))
+
+        await message.delete()
+        .then(console.log("Original command deleted."));
 
         await webhook.send({embeds: [
             new Discord.MessageEmbed()
@@ -47,11 +60,8 @@ module.exports.run = async (bot, message, args) => {
                 .setDescription('Accessing Gallery Now . . .')
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
-                .setThumbnail('attachment://Manticore.png')
-        ]})
-        .then(console.log("Accessing Gallery."))
+                .setThumbnail('attachment://Manticore.png'),
 
-        await webhook.send({embeds: [
             new Discord.MessageEmbed().attachFiles(['./attachments/Gallery1.png'])
                                       .setColor('#ff9900')
                                       .setImage('attachment://Gallery1.png'),
@@ -67,7 +77,8 @@ module.exports.run = async (bot, message, args) => {
         .then(console.log("Gallery sent."))
 
         await webhook.delete()
-        .then(console.log("Temporary webhook deleted."))
+        .then(sent.delete())
+        .then(console.log("Temporary webhook deleted.\nAll Done :)\n"))
 
     } catch (error) {
         console.error('Error trying to send: ', error);
