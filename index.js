@@ -6,7 +6,8 @@ const config = require('./config.json');
 client.on('ready', async () =>{
     console.log("This client is online \n");
     
-    client.user.setActivity(`on ${client.guilds.cache.size} servers`)
+    //client.user.setActivity(`on ${client.guilds.cache.size} servers`)
+    client.user.setActivity(`Quiet's mom`)
     //client.channels.cache.get('727237273023676436').send('Fuck you too Dryer.');
 
 });
@@ -34,6 +35,10 @@ fs.readdir('./commands', (err, files) =>{
     })
 });
 
+function isLetter(str){
+    return (str.toLowerCase() != str.toUpperCase());
+}
+
 // Create an event listener for new guild members
 client.on('guildMemberAdd', (member) => {
     console.log('User ' + member.user.username + ' has joined the server!');
@@ -60,6 +65,9 @@ client.on('message', message =>{
     // We don't want the bot to do anything further if it can't send messages in the channel
     if (message.guild && !message.channel.permissionsFor(message.guild.me).missing('SEND_MESSAGES')) return;
     
+    //While I'm testing the bot, if they don't have Admin priveleges, they can't send commands
+    if(!message.member.permissions.toArray().includes("ADMINISTRATOR")) return;
+
     console.log("[" + message.member.nickname +" @ " + message.channel.name + "]: " + message.toString());
 
     //lets say message.content = "?add halo please"
@@ -67,10 +75,17 @@ client.on('message', message =>{
     let messageArray = message.content.split(" "); //Makes an array splitting up first space in sentence, e.g ["!add", "halo please"]
     let cmd = messageArray[0].toLowerCase(); //Gets the first comamnd 
     let args = messageArray.slice(1); //Makes an array without the first index
-
+    
+    //Boolean as to whether the command exists
     let commandFile = client.commands.get(cmd.slice(prefix.length)); 
 
-    if(commandFile){
+    if((cmd.charAt(0) === prefix) && (!commandFile)){
+        console.log("! INVALID COMMAND USED ! : " + cmd)
+        message.reply("that is an invalid command. Would you like to try again?")
+    }
+
+    //If the first letter of the first word is prefix, and the following word is a valid command
+    else if((cmd.charAt(0) === prefix) && (commandFile)){
         console.log("! VALID COMMAND DETECTED ! : " + cmd)
         commandFile.run(client, message, args);
     }
