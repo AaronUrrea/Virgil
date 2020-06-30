@@ -6,45 +6,23 @@ const { waitForDebugger } = require('inspector');
 module.exports.run = async (bot, message, args) => {
     
     var channelOrigin = message.channel;
-    //channelOrigin is the channel of the original Message
 
-    //Create a webhook, that puts four images into one message and sends it
-/*    const hooks = await channelOrigin.createWebhook('Virgil', './attachments/Virgil.png')
-        .then(w => w.send({embeds: [
-            new Discord.MessageEmbed()
-                .setColor('#ff9900')
-                .setTitle('111th Manticore Company')
-                .setDescription('Accessing Gallery Now . . .')
-                .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
-                .setAuthor('UNSC', 'attachment://UNSC.png')
-                .setThumbnail('attachment://Manticore.png'),
-
-            new Discord.MessageEmbed().attachFiles(['./attachments/Gallery1.png'])
-                                      .setColor('#ff9900')
-                                      .setImage('attachment://Gallery1.png'),
-
-            new Discord.MessageEmbed().attachFiles(['./attachments/Gallery2.png'])
-                                      .setColor('#ff9900')
-                                      .setImage('attachment://Gallery2.png'),
-
-            new Discord.MessageEmbed().attachFiles(['./attachments/Gallery3.png'])
-                                      .setColor('#ff9900')
-                                      .setImage('attachment://Gallery3.png')
-                                      
-        ]}))
-*/
     try {
-        channelOrigin.createWebhook('Virgil');
+        await channelOrigin.createWebhook('Virgil', {
+            avatar: './attachments/Virgil.png'
+        })
+
         const webhooks = await channelOrigin.fetchWebhooks();
+        //console.log(webhooks)
         const webhook = await webhooks.first();
+        //console.log(webhook)
 
         console.log("\nCreating temporary Webhook: " + webhook.name + " @ " + channelOrigin.name);
-
 
         let sent = await message.channel.send(new Discord.MessageEmbed()
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
-                .setDescription('Accessing Gallery Now . . .')
+                .setDescription('Permission granted, ' + message.member.nickname + '.\nAccessing Gallery Now . . .')
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
                 .setThumbnail('attachment://Manticore.png'))
@@ -57,7 +35,7 @@ module.exports.run = async (bot, message, args) => {
             new Discord.MessageEmbed()
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
-                .setDescription('Accessing Gallery Now . . .')
+                .setDescription('Permission granted, ' + message.member.nickname + '.\nAccessing Gallery Now . . .')
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
                 .setThumbnail('attachment://Manticore.png'),
@@ -83,11 +61,7 @@ module.exports.run = async (bot, message, args) => {
     } catch (error) {
         console.error('Error trying to send: ', error);
     }
-
-
 }
-
-
 
 module.exports.config = {
     name: "gallery"

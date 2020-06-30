@@ -35,10 +35,6 @@ fs.readdir('./commands', (err, files) =>{
     })
 });
 
-function isLetter(str){
-    return (str.toLowerCase() != str.toUpperCase());
-}
-
 // Create an event listener for new guild members
 client.on('guildMemberAdd', (member) => {
     console.log('User ' + member.user.username + ' has joined the server!');
@@ -80,13 +76,13 @@ client.on('message', message =>{
     let commandFile = client.commands.get(cmd.slice(prefix.length)); 
 
     if((cmd.charAt(0) === prefix) && (!commandFile)){
-        console.log("! INVALID COMMAND USED ! : " + cmd)
+        console.log("\n! INVALID COMMAND USED ! : " + cmd + "\n")
         message.reply("that is an invalid command. Would you like to try again?")
     }
 
     //If the first letter of the first word is prefix, and the following word is a valid command
     else if((cmd.charAt(0) === prefix) && (commandFile)){
-        console.log("! VALID COMMAND DETECTED ! : " + cmd)
+        console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")
         commandFile.run(client, message, args);
     }
 });
