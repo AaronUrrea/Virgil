@@ -6,17 +6,30 @@ const { waitForDebugger } = require('inspector');
 
 module.exports.run = async (bot, message, args) => {
     
-    var channelOrigin = message.channel;
-    var memberOrigin = message.member;
-    var messageDuplicate = message;
+    var channelOrigin;
+    var memberOrigin;
 
-    try{
-        message.delete();
+    if(args !='index'){
+        try{
+            channelOrigin = message.channel;
+            memberOrigin = member.user;
+            await message.delete();
+        }
+        catch(error){
+            console.log("Message delete failiure.")
+        }
     }
-    catch(error){
-        console.log("Message delete failiure.")
+    else if(args ==='index'){
+        try{
+            channelOrigin = message[1];
+            memberOrigin = member[0];
+            await message.delete();
+        }
+        catch(error){
+            console.log("Message delete failiure.")
+        }
     }
-
+    
     let infoEmbed = new Discord.MessageEmbed()
     .setColor('#ff9900')
     .setTitle('111th Manticore Company')
@@ -36,7 +49,7 @@ module.exports.run = async (bot, message, args) => {
         { name: ((message.member.nickname == null ? message.member.user.username : message.member.nickname) + 
                 ', there are several actions you can select:'), 
                 value: '[✖] Closes this window.\n[✔️] Advances to the Gallery. '+
-                '\nThis message will auto-delete in 60 seconds.'},
+                '\nThis message will auto-delete in 5 Minutes.'},
     )
     let infoMessage = await channelOrigin.send(infoEmbed)
     .then(console.log("Sending info to: " + memberOrigin.nickname))
@@ -53,7 +66,7 @@ module.exports.run = async (bot, message, args) => {
             
     //This waits for a reaction by using the emoji and user from the filter
     //It will send an error after 60 seconds and auto
-    await infoMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+    await infoMessage.awaitReactions(filter, { max: 1, time: 300000, errors: ['time'] })
     .then(collected => {
         const reaction = collected.first();
     

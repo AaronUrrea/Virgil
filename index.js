@@ -59,10 +59,13 @@ client.on('guildMemberAdd', async (member) => {
 
     let welcomeMessage = await member.guild.channels.cache.find(c => c.name === "space-port").send(welcomeEmbed);
 
+        console.log(member)
+        console.log(member)
+
     //This reacts an X to the embeded message   
     await welcomeMessage.react('✖')
-    .then(welcomeMessage.react('✔️'))
-    .then(console.log("Exit reaction assigned."))
+        .then(welcomeMessage.react('✔️'))
+        .then(console.log("Exit reaction assigned."))
 
     //This is the filter that determines the emojis and the original member
     const filter = (reaction, user) => {
@@ -71,22 +74,20 @@ client.on('guildMemberAdd', async (member) => {
     
     //This waits for a reaction by using the emoji and user from the filter
     //It will send an error after 60 seconds and auto
-    await welcomeMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+    await welcomeMessage.awaitReactions(filter, { max: 1, errors: ['time'] })
     .then(collected => {
     const reaction = collected.first();
 
     if (reaction.emoji.name === '✖') {
-        
-        console.log("User is not here for Halo :(");
+        console.log("User is not here for Halo :(")
+        .then(welcomeMessage.delete());
     }
-    else if(reaction.emoji.name === '✔️') {
-        
+    else if(reaction.emoji.name === '✔️') { 
         console.log("User is here for Halo :). Redirecting to event")
+        let commandFile = client.commands.get('index');   
 
+        welcomeMessage.delete();
     }})
-    .catch(collected => {
-
-    });
 });
 
 client.on('message', message =>{
