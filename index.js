@@ -84,7 +84,8 @@ client.on('guildMemberAdd', async (member) => {
     }
     else if(reaction.emoji.name === '✔️') { 
         console.log("User is here for Halo :). Redirecting to event")
-        client.commandFile.get('index').run(client, '', index, member, welcomeMessage.channel)
+        let commandFile = client.commands.get('info'); 
+        commandFile.run(client, '', 'index', member, welcomeMessage.channel)
 
         welcomeMessage.delete();
     }})

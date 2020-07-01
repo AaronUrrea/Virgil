@@ -5,8 +5,6 @@ const { watchFile } = require('fs');
 const { waitForDebugger } = require('inspector');
 
 module.exports.run = async (bot, message, args, player, channel) => {
-    
-    console.log(player)
 
     try{
         await message.delete();
@@ -62,7 +60,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         }
         else if(reaction.emoji.name === '✔️') {
             infoMessage.delete()
-            .then(console.log("User reacted. Directing to Gallery."))
+            .then(console.log("User reacted. Directing to Gallery.\n"))
             .then(gallery.run(bot, message, 'info', player, channel))
         }})
     .catch(collected => {

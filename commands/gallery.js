@@ -19,7 +19,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         console.log("Creating temporary Webhook: " + webhook.name + " @ " + channel.name);
 
         //This is a temporary gallery message that appears while the actual gallery loads
-        let tempGallery = await message.channel.send(new Discord.MessageEmbed()
+        let tempGallery = await channel.send(new Discord.MessageEmbed()
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
                 .setDescription('Permission granted, ' + 
@@ -67,8 +67,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
                                       .setColor('#ff9900')
                                       .setTitle('111th Manticore Company')
                                       .setDescription((player.nickname == null ? player.user.username : player.nickname) + 
-                                                     ', please click [✖] to exit' +
-                                                     (args === 'info' ? ', or click [🔙] to return to info.' : '.') +
+                                                     (args === 'info' ? ', Click [🔙] to return to info.' : ', Click [✖] to exit.') +
                                                      '\nThis message will auto-delete in 5 Minutes.')
                                       .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                                       .setAuthor('UNSC', 'attachment://UNSC.png')
@@ -81,11 +80,10 @@ module.exports.run = async (bot, message, args, player, channel) => {
         .then(tempGallery.delete())
         .then(console.log("Temporary webhook deleted."))
 
-        //If args is info, add a second reaction, else, just assign back
+        //If args is info, add a back reaction, else, just assign exit
         if(args === 'info'){
-            await embedMessage.react('✖')
-            .then(embedMessage.react('🔙'))
-            .then(console.log("Exit and redirect reaction assigned."))
+            await embedMessage.react('🔙')
+            .then(console.log("Redirect reaction assigned."))
         }
 
         else{
@@ -96,7 +94,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         //This is the filter that determines the emojis and the original member
         const filter = (reaction, user) => {
             if(args === 'info')
-                return ['✖', '🔙'].includes(reaction.emoji.name) && user.id === player.id;
+                return ['🔙'].includes(reaction.emoji.name) && user.id === player.id;
             else{
                 return ['✖'].includes(reaction.emoji.name) && user.id === player.id;
             }
@@ -110,11 +108,11 @@ module.exports.run = async (bot, message, args, player, channel) => {
         
                 if (reaction.emoji.name === '✖') {
                     embedMessage.delete()
-                    .then(console.log("User reacted. Deleting message."))}
+                    .then(console.log("User reacted. Deleting message.\n"))}
 
                 if ((reaction.emoji.name === '🔙') && (args === 'info')) {
                     embedMessage.delete()
-                    .then(console.log("User reacted. Returning to Info"))    
+                    .then(console.log("User reacted. Returning to Info\n"))    
                     .then(info.run(bot, message, 'gallery', player, channel));
             }})
             .catch(collected => {
