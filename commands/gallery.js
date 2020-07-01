@@ -5,7 +5,12 @@ const { waitForDebugger } = require('inspector');
 
 module.exports.run = async (bot, message, args) => {
     
+    //console.log(args.toString()[0])
+
     var channelOrigin = message.channel;
+    var memberOrigin = message.member;
+
+    //console.log(memberOrigin)
 
     try {
         await channelOrigin.createWebhook('Virgil', {
@@ -17,9 +22,10 @@ module.exports.run = async (bot, message, args) => {
         const webhook = await webhooks.first();
         //console.log(webhook)
 
-        console.log("\nCreating temporary Webhook: " + webhook.name + " @ " + channelOrigin.name);
+        console.log("Creating temporary Webhook: " + webhook.name + " @ " + channelOrigin.name);
 
-        let sent = await message.channel.send(new Discord.MessageEmbed()
+        //This is a temporary gallery message that appears while the actual gallery loads
+        let tempGallery = await message.channel.send(new Discord.MessageEmbed()
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
                 .setDescription('Permission granted, ' + message.member.nickname + '.\nAccessing Gallery Now . . .')
@@ -28,10 +34,17 @@ module.exports.run = async (bot, message, args) => {
                 .setThumbnail('attachment://Manticore.png'))
         .then(console.log("Accessing Gallery."))
 
-        await message.delete()
-        .then(console.log("Original command deleted."));
+        //This deletes the original command message
+        try{
+            await message.delete()
+            .then(console.log("Original command deleted."));
+        }
+        catch(error){
+            console.log("Message not found. Skipping.")
+        }
 
-        await webhook.send({embeds: [
+        //This is the full embeded message with all of the images in the gallery
+        let embedMessage = await webhook.send({embeds: [
             new Discord.MessageEmbed()
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
@@ -50,13 +63,47 @@ module.exports.run = async (bot, message, args) => {
 
             new Discord.MessageEmbed().attachFiles(['./attachments/Gallery3.png'])
                                       .setColor('#ff9900')
-                                      .setImage('attachment://Gallery3.png')
+                                      .setImage('attachment://Gallery3.png'),
+                                      
+            new Discord.MessageEmbed()
+                                      .setColor('#ff9900')
+                                      .setTitle('111th Manticore Company')
+                                      .setDescription(message.member.nickname + ', please click [✖] when complete.' +
+                                                     '\nThis message will auto-delete in 60 seconds.')
+                                      .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
+                                      .setAuthor('UNSC', 'attachment://UNSC.png')
+                                      .setThumbnail('attachment://Manticore.png'),
         ]})
         .then(console.log("Gallery sent."))
 
+        //This deletes the webhook and the temporary gallery
         await webhook.delete()
-        .then(sent.delete())
-        .then(console.log("Temporary webhook deleted.\nAll Done :)\n"))
+        .then(tempGallery.delete())
+        .then(console.log("Temporary webhook deleted."))
+
+        //This reacts an X to the embeded message
+        await embedMessage.react('✖')
+        .then(console.log("Exit reaction assigned."))
+    
+        //This is the filter that determines the emojis and the original member
+        const filter = (reaction, user) => {
+            return ['✖'].includes(reaction.emoji.name) && user.id === memberOrigin.id;
+        };
+        
+        //This waits for a reaction by using the emoji and user from the filter
+        //It will send an error after 60 seconds and auto
+        await embedMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+            .then(collected => {
+                const reaction = collected.first();
+        
+                if (reaction.emoji.name === '✖') {
+                    embedMessage.delete()
+                    .then(console.log("User reacted. Deleting message."))
+            }})
+            .catch(collected => {
+                embedMessage.delete()
+                .then(console.log("User did not react. Deleting message.\n"))
+            });
 
     } catch (error) {
         console.error('Error trying to send: ', error);

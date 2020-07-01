@@ -64,17 +64,25 @@ client.on('message', message =>{
     //While I'm testing the bot, if they don't have Admin priveleges, they can't send commands
     if(!message.member.permissions.toArray().includes("ADMINISTRATOR")) return;
 
-    console.log("[" + message.member.nickname +" @ " + message.channel.name + "]: " + message.toString());
+    console.log("[" + 
+                (message.member.nickname == null ? message.member.user.username : message.member.nickname)  
+                +" @ " + message.channel.name + "]: " + message.toString());
 
     //lets say message.content = "?add halo please"
     let prefix = config.PREFIX; //Copies prefix to a local variable
     let messageArray = message.content.split(" "); //Makes an array splitting up first space in sentence, e.g ["!add", "halo please"]
     let cmd = messageArray[0].toLowerCase(); //Gets the first comamnd 
-    let args = messageArray.slice(1); //Makes an array without the first index
+    let args = messageArray.splice(1); //Makes an array without the first index
     
+    //console.log("test: " + messageArray.toString()[0])
+
+    //If the first letter isnt prefix, returns
+    if(cmd.charAt(0) != prefix) return;
+
     //Boolean as to whether the command exists
     let commandFile = client.commands.get(cmd.slice(prefix.length)); 
 
+    //If it has prefix, but isn't a vilid command
     if((cmd.charAt(0) === prefix) && (!commandFile)){
         console.log("\n! INVALID COMMAND USED ! : " + cmd + "\n")
         message.reply("that is an invalid command. Would you like to try again?")

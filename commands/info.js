@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const config = require('../config.json');
+const gallery = require('./gallery.js')
 const { watchFile } = require('fs');
 const { waitForDebugger } = require('inspector');
 
@@ -9,10 +10,10 @@ const { waitForDebugger } = require('inspector');
 module.exports.run = async (bot, message, args) => {
     
     var channelOrigin = message.channel;
+    var memberOrigin = message.member;
+    var messageDuplicate = message;
 
-    setTimeout(() => {
-        message.delete();
-    }, 1000);
+    message.delete();
     
     let infoEmbed = new Discord.MessageEmbed()
     .setColor('#ff9900')
@@ -25,7 +26,6 @@ module.exports.run = async (bot, message, args) => {
                     'For Recruiter** channel and a recruiter will be with you asap. Enjoy your stay!')
     .setThumbnail('attachment://Manticore.png')
 	.addFields(
-		{ name: '\u200B', value: '\u200B' },
 		{ name: '**SCHEDULE:**', value: '\u200B'},
 		{ name: 'Monday', value: 'Free', inline: true },
         { name: 'Tuesday', value: 'Free', inline: true },
@@ -34,16 +34,42 @@ module.exports.run = async (bot, message, args) => {
         { name: 'Friday', value: 'Training', inline: true },
         { name: 'Saturday', value: 'Free', inline: true },
         { name: 'Sunday', value: 'Story Operation, 7:30PM Load CST, 8:00PM Briefing/Step Off', inline: true },
+        { name: '\u200B', value: '\u200B' },
+        { name: (message.member.nickname + ', there are several actions you can select:'), 
+                value: '[✖] Closes this window.\n[✔️] Advances to the Gallery. ', inline: true },
+    )
+    let infoMessage = await channelOrigin.send(infoEmbed)
+    .then(console.log("Sending info to: " + memberOrigin.nickname))
 
-	)
-
-
-    //console.log("Wait 5");
-    //setTimeout(() => { console.log("Done")}, 5000)
-
-    channelOrigin.send(infoEmbed);
+    //This reacts an X to the embeded message   
+    await infoMessage.react('✖')
+        .then(infoMessage.react('✔️'))
+        .then(console.log("Exit reaction assigned."))
+        
+            //This is the filter that determines the emojis and the original member
+            const filter = (reaction, user) => {
+                return ['✖', '✔️'].includes(reaction.emoji.name) && user.id === memberOrigin.id;
+            };
+            
+    //This waits for a reaction by using the emoji and user from the filter
+    //It will send an error after 60 seconds and auto
+    await infoMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+    .then(collected => {
+        const reaction = collected.first();
     
-
+        if (reaction.emoji.name === '✖') {
+            infoMessage.delete()
+            .then(console.log("User reacted. Deleting message."))
+        }
+        else if(reaction.emoji.name === '✔️') {
+            infoMessage.delete()
+            .then(console.log("User reacted. Directing to Gallery."))
+            .then(gallery.run(bot, message, args))
+        }})
+    .catch(collected => {
+        infoMessage.delete()
+        .then(console.log("User did not react. Deleting message.\n"))
+    });
 }
 
 module.exports.config = {
