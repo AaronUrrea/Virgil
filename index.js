@@ -36,19 +36,57 @@ fs.readdir('./commands', (err, files) =>{
 });
 
 // Create an event listener for new guild members
-client.on('guildMemberAdd', (member) => {
+client.on('guildMemberAdd', async (member) => {
     console.log('User ' + member.user.username + ' has joined the server!');
-    member.roles.add(member.guild.roles.cache.find(role => role.name === 'Recruit'));
+    member.roles.add(member.guild.roles.cache.get("725094694173933599")); //Add Squad
+    member.roles.add(member.guild.roles.cache.get("725094695247675402")); //Add Callsign
     member.roles.add(member.guild.roles.cache.get("725106540700368947")); //Add Attributes
     member.roles.add(member.guild.roles.cache.get("725094695881015407")); //Add Communities
 
-    //Squad - 725094694173933599
-    //Callsign - 725094695247675402
-    //Attributes - 725106540700368947
-    //Communities - 725094695881015407
+    let welcomeEmbed = new Discord.MessageEmbed()
+    .setColor('#ff9900')
+    .setTitle('111th Manticore Company')
+    .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
+    .setAuthor('UNSC', 'attachment://UNSC.png')
+    .setDescription('Welcome ' + member.user.username + ' to the 111th Manticore Company! We are a Gaming Community,' + 
+                    ' focused primarily on Arma 3 within the Halo universe. Besides our main Arma 3 server, we offer a community' +
+                    ' for other games, such as Arma 3 Antisasi/Zombies and Stellaris! We hope you enjoy your stay within our community!')
+	.addFields(
+        { name: '\u200B', value: '\u200B'},
+        { name: ('Before you can gain access to our other channels, are you here for our Halo Community?\n'),  
+                value : '[✔️] "Yes, I am here for Halo!\n[✖] "No, I am just here to browse."'})
+    .setThumbnail('attachment://Manticore.png')
 
-    console.log(`New User "${member.user.username}" has joined "${member.guild.name}"` );
-    member.guild.channels.cache.find(c => c.name === "new-player-chat").send(`"${member.user.username}" has joined this server`);
+    let welcomeMessage = await member.guild.channels.cache.find(c => c.name === "space-port").send(welcomeEmbed);
+
+    //This reacts an X to the embeded message   
+    await welcomeMessage.react('✖')
+    .then(welcomeMessage.react('✔️'))
+    .then(console.log("Exit reaction assigned."))
+
+    //This is the filter that determines the emojis and the original member
+    const filter = (reaction, user) => {
+        return ['✖', '✔️'].includes(reaction.emoji.name) && user.id === member.id;
+    };
+    
+    //This waits for a reaction by using the emoji and user from the filter
+    //It will send an error after 60 seconds and auto
+    await welcomeMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+    .then(collected => {
+    const reaction = collected.first();
+
+    if (reaction.emoji.name === '✖') {
+        
+        console.log("User is not here for Halo :(");
+    }
+    else if(reaction.emoji.name === '✔️') {
+        
+        console.log("User is here for Halo :). Redirecting to event")
+
+    }})
+    .catch(collected => {
+
+    });
 });
 
 client.on('message', message =>{
