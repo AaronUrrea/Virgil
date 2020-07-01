@@ -6,8 +6,8 @@ const config = require('./config.json');
 client.on('ready', async () =>{
     console.log("This client is online \n");
     
-    //client.user.setActivity(`on ${client.guilds.cache.size} servers`)
-    client.user.setActivity(`Quiet's mom`)
+    client.user.setActivity(`on ${client.guilds.cache.size} servers`)
+    //client.user.setActivity(`Quiet's mom`)
     //client.channels.cache.get('727237273023676436').send('Fuck you too Dryer.');
 
 });
@@ -84,7 +84,7 @@ client.on('guildMemberAdd', async (member) => {
     }
     else if(reaction.emoji.name === '✔️') { 
         console.log("User is here for Halo :). Redirecting to event")
-        let commandFile = client.commands.get('index');   
+        client.commandFile.get('index').run(client, '', index, member, welcomeMessage.channel)
 
         welcomeMessage.delete();
     }})
@@ -130,7 +130,7 @@ client.on('message', message =>{
     //If the first letter of the first word is prefix, and the following word is a valid command
     else if((cmd.charAt(0) === prefix) && (commandFile)){
         console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")
-        commandFile.run(client, message, args);
+        commandFile.run(client, message, args, (message.member), (message.channel));
     }
 });
 

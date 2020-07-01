@@ -4,32 +4,26 @@ const info = require('./info.js')
 const { watchFile } = require('fs');
 const { waitForDebugger } = require('inspector');
 
-module.exports.run = async (bot, message, args) => {
+module.exports.run = async (bot, message, args, player, channel) => {
     
- 
-    var channelOrigin = message.channel;
-    var memberOrigin = message.member;
-
-    //console.log(memberOrigin)
-
     try {
-        await channelOrigin.createWebhook('Virgil', {
+        await channel.createWebhook('Virgil', {
             avatar: './attachments/Virgil.png'
         })
 
-        const webhooks = await channelOrigin.fetchWebhooks();
+        const webhooks = await channel.fetchWebhooks();
         //console.log(webhooks)
         const webhook = await webhooks.first();
         //console.log(webhook)
 
-        console.log("Creating temporary Webhook: " + webhook.name + " @ " + channelOrigin.name);
+        console.log("Creating temporary Webhook: " + webhook.name + " @ " + channel.name);
 
         //This is a temporary gallery message that appears while the actual gallery loads
         let tempGallery = await message.channel.send(new Discord.MessageEmbed()
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
                 .setDescription('Permission granted, ' + 
-                    (message.member.nickname == null ? message.member.user.username : message.member.nickname) +
+                    (player.nickname == null ? player.user.username : player.nickname) +
                     '.\nAccessing Gallery Now . . .')
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
@@ -51,7 +45,7 @@ module.exports.run = async (bot, message, args) => {
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
                 .setDescription('Permission granted, ' + 
-                    (message.member.nickname == null ? message.member.user.username : message.member.nickname) +
+                    (player.nickname == null ? player.user.username : player.nickname) +
                     '.\nAccessing Gallery Now . . .')
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
@@ -72,7 +66,7 @@ module.exports.run = async (bot, message, args) => {
             new Discord.MessageEmbed()
                                       .setColor('#ff9900')
                                       .setTitle('111th Manticore Company')
-                                      .setDescription((message.member.nickname == null ? message.member.user.username : message.member.nickname) + 
+                                      .setDescription((player.nickname == null ? player.user.username : player.nickname) + 
                                                      ', please click [✖] to exit' +
                                                      (args === 'info' ? ', or click [🔙] to return to info.' : '.') +
                                                      '\nThis message will auto-delete in 5 Minutes.')
@@ -87,7 +81,7 @@ module.exports.run = async (bot, message, args) => {
         .then(tempGallery.delete())
         .then(console.log("Temporary webhook deleted."))
 
-        //This reacts an X to the embeded message
+        //If args is info, add a second reaction, else, just assign back
         if(args === 'info'){
             await embedMessage.react('✖')
             .then(embedMessage.react('🔙'))
@@ -102,9 +96,9 @@ module.exports.run = async (bot, message, args) => {
         //This is the filter that determines the emojis and the original member
         const filter = (reaction, user) => {
             if(args === 'info')
-                return ['✖', '🔙'].includes(reaction.emoji.name) && user.id === memberOrigin.id;
+                return ['✖', '🔙'].includes(reaction.emoji.name) && user.id === player.id;
             else{
-                return ['✖'].includes(reaction.emoji.name) && user.id === memberOrigin.id;
+                return ['✖'].includes(reaction.emoji.name) && user.id === player.id;
             }
         };
         
@@ -121,7 +115,7 @@ module.exports.run = async (bot, message, args) => {
                 if ((reaction.emoji.name === '🔙') && (args === 'info')) {
                     embedMessage.delete()
                     .then(console.log("User reacted. Returning to Info"))    
-                    .then(info.run(bot, message, ''));
+                    .then(info.run(bot, message, 'gallery', player, channel));
             }})
             .catch(collected => {
                 embedMessage.delete()

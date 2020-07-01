@@ -4,31 +4,16 @@ const gallery = require('./gallery.js')
 const { watchFile } = require('fs');
 const { waitForDebugger } = require('inspector');
 
-module.exports.run = async (bot, message, args) => {
+module.exports.run = async (bot, message, args, player, channel) => {
     
-    var channelOrigin;
-    var memberOrigin;
+    console.log(player)
 
-    if(args !='index'){
-        try{
-            channelOrigin = message.channel;
-            memberOrigin = member.user;
-            await message.delete();
-        }
-        catch(error){
-            console.log("Message delete failiure.")
-        }
+    try{
+        await message.delete();
     }
-    else if(args ==='index'){
-        try{
-            channelOrigin = message[1];
-            memberOrigin = member[0];
-            await message.delete();
-        }
-        catch(error){
-            console.log("Message delete failiure.")
-        }
-    }
+    catch(error){
+        console.log("Message delete failure.")
+    } 
     
     let infoEmbed = new Discord.MessageEmbed()
     .setColor('#ff9900')
@@ -46,13 +31,14 @@ module.exports.run = async (bot, message, args) => {
         { name: 'Sunday', value: 'Story Operation, 7:30PM CST Load In, 8:00PM CST Briefing/Step Off.', inline: true },
         { name: '\u200B', value: 'BCT, Side Ops and Fun Ops are subject to change, and will be scheduled flexibly.'},   
         { name: '\u200B', value: '\u200B' },
-        { name: ((message.member.nickname == null ? message.member.user.username : message.member.nickname) + 
+        { name: ((player.nickname == null ? player.user.username : player.nickname) + 
                 ', there are several actions you can select:'), 
                 value: '[✖] Closes this window.\n[✔️] Advances to the Gallery. '+
                 '\nThis message will auto-delete in 5 Minutes.'},
     )
-    let infoMessage = await channelOrigin.send(infoEmbed)
-    .then(console.log("Sending info to: " + memberOrigin.nickname))
+
+    let infoMessage = await channel.send(infoEmbed)
+    .then(console.log("Sending info to: " + player.nickname))
 
     //This reacts an X to the embeded message   
     await infoMessage.react('✖')
@@ -61,7 +47,7 @@ module.exports.run = async (bot, message, args) => {
         
             //This is the filter that determines the emojis and the original member
             const filter = (reaction, user) => {
-                return ['✖', '✔️'].includes(reaction.emoji.name) && user.id === memberOrigin.id;
+                return ['✖', '✔️'].includes(reaction.emoji.name) && user.id === player.id;
             };
             
     //This waits for a reaction by using the emoji and user from the filter
@@ -77,7 +63,7 @@ module.exports.run = async (bot, message, args) => {
         else if(reaction.emoji.name === '✔️') {
             infoMessage.delete()
             .then(console.log("User reacted. Directing to Gallery."))
-            .then(gallery.run(bot, message, 'info'))
+            .then(gallery.run(bot, message, 'info', player, channel))
         }})
     .catch(collected => {
         infoMessage.delete()
