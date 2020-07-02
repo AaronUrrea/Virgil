@@ -20,7 +20,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
     let infoEmbed = new Discord.MessageEmbed()
     .setColor('#ff9900')
     .setTitle('111th Manticore Company')
-    .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
+    .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'/*, './attachments/Sheet.png'*/])
     .setAuthor('UNSC', 'attachment://UNSC.png')
     .setDescription('We are a gaming community that primarily focuses on Halo Operations in Arma 3.' +
                     'We also do a variety of operations that cycle throughout the weeks. Currently, we have:')
@@ -44,6 +44,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
                      '\nThis message will auto-resolve after 5 minutes of inactivity.') : 
                      ((player.nickname == null ? player.user.username : player.nickname) +', click [✖] to exit this menu.'+
                      '\nThis message will auto-resolve after 5 minutes of inactivity.') )})
+        //.setImage('attachment://Sheet.png')
 
     let infoMessage = await channel.send(infoEmbed)
     .then(console.log("Sending info to: " + player.user.username))
