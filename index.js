@@ -104,17 +104,18 @@ client.on('message', message =>{
     //If the first letter isnt prefix, returns
     if(cmd.charAt(0) != prefix) return
 
-    //If it has prefix, but isn't a vilid command
-    else if((cmd.charAt(0) === prefix) && (!commandFile)){
-        console.log("\n! INVALID COMMAND USED ! : " + cmd + "\n")
-        message.reply("that is an invalid command. Would you like to try again?")
-    }
-
     //If the first letter of the first word is prefix, and the following word is a valid command
     else if((cmd.charAt(0) === prefix) && (commandFile)){
         console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")
         commandFile.run(client, message, args, (message.member), (message.channel));
     }
+
+    //If it has prefix, but isn't a valid command
+    else if((cmd.charAt(0) === prefix) && (!commandFile)){
+        console.log("\n! INVALID COMMAND USED ! : " + cmd + "\n")
+        message.reply("that is an invalid command. Would you like to try again?")
+    }        
+    
 });
 
 //Logs the client in

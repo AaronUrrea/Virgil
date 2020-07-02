@@ -75,8 +75,8 @@ module.exports.run = async (bot, message, args, player, channel) => {
         ]})
 
         //This deletes the webhook and the temporary gallery
-        await webhook.delete()
-        .then(tempGallery.delete())
+        await tempGallery.delete()
+        .then(webhook.delete())
 
         //If args is info, add a back reaction, else, just assign exit
         if(args === 'info'){
