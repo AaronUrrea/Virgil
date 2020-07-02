@@ -3,6 +3,7 @@ const config = require('../config.json');
 
 const gallery = require('./gallery.js')
 const communites = require('./communities.js');
+const confirmation = require('./confirmation.js');
 
 const { watchFile } = require('fs');
 const { waitForDebugger } = require('inspector');
@@ -22,11 +23,15 @@ module.exports.run = async (bot, message, args, player, channel) => {
     .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
     .setAuthor('UNSC', 'attachment://UNSC.png')
     .setDescription('We are a gaming community that primarily focuses on Halo Operations in Arma 3.' +
-                    'We also do a variety of operations that cycle throughout the weeks. If your interested in being apart of' + 
-                    'our fantastic community then head over to our **TeamSpeak: 185.249.196.154:9104** and hop into the **#Waiting' +
-                    'For Recruiter** channel and a recruiter will be with you asap. Enjoy your stay!')
+                    'We also do a variety of operations that cycle throughout the weeks. Currently, we have:')
     .setThumbnail('attachment://Manticore.png')
 	.addFields(
+        { name: 'Marine Division', value: '"Hoplite"', inline: true },
+        { name: 'Scout Divisions', value: '"Pathfinder" & "Chisel"', inline: true },
+        { name: 'Air Division', value: '"Black Dragon"', inline: true },
+        { name: 'Armor Division', value: '"Titan"', inline: true },
+        { name: 'ODST  Division', value: '"Wyvern"', inline: true },
+        { name: 'Talk to your @Recruiter today to see which slots are avaliable!', value: '\u200B'},
 		{ name: '**SCHEDULE:**', value: '\u200B'},
         { name: 'Friday', value: 'Training, 7:30PM CST Load In, 8:00PM CST Briefing/Step Off.', inline: true },
         { name: 'Sunday', value: 'Story Operation, 7:30PM CST Load In, 8:00PM CST Briefing/Step Off.', inline: true },
@@ -34,12 +39,14 @@ module.exports.run = async (bot, message, args, player, channel) => {
         { name: '\u200B', value: '\u200B' },
         { name: ((player.nickname == null ? player.user.username : player.nickname) + 
                 ', there are several actions you can select:'), 
-                value: '[✖] Closes this window.\n[✔️] Advances to the Gallery. '+
-                '\nThis message will auto-delete in 5 Minutes.'},
-    )
+                value: (args === 'index' || args === 'gallery' ?
+                    ('[✖] "I do not want to be apart of Manticore".\n[✔️] "Sign me up for Manticore!"\n[🔜] Visit the Gallery. '+
+                     '\nThis message will auto-resolve after 5 minutes of inactivity.') : 
+                     ((player.nickname == null ? player.user.username : player.nickname) +', click [✖] to exit this menu.'+
+                     '\nThis message will auto-resolve after 5 minutes of inactivity.') )})
 
     let infoMessage = await channel.send(infoEmbed)
-    .then(console.log("Sending info to: " + player.nickname))
+    .then(console.log("Sending info to: " + player.user.username))
 
     //This reacts an X to the embeded message   
     if(args === 'index' || args === 'gallery'){
@@ -50,7 +57,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
     }
     else{
         await infoMessage.react('✖')
-        .then(infoMessage.react('🔜'))
         .then(console.log("Exit + Gallery reactions assigned"))
     }
         
@@ -60,7 +66,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
                 return ['✖', '✔️', '🔜'].includes(reaction.emoji.name) && user.id === player.id;
             }
             else{
-                return ['✖', '🔜'].includes(reaction.emoji.name) && user.id === player.id;
+                return ['✖'].includes(reaction.emoji.name) && user.id === player.id;
             }
         }
 
@@ -71,14 +77,19 @@ module.exports.run = async (bot, message, args, player, channel) => {
     .then(collected => {
         const reaction = collected.first();
         
-        if (reaction.emoji.name === '✖') {
+        if (reaction.emoji.name === '✖' && (args === 'index' || args === 'gallery')) {
             infoMessage.delete()
-            .then(console.log("User reacted. Deleting message."))
+            .then(console.log("User denied. Sending to confirmation."))
+            .then(confirmation.run(bot, message, 'info', player, channel))
+        }
+        else if (reaction.emoji.name === '✖' && args != 'index') {
+            infoMessage.delete()
+            .then(console.log("User denied. Exiting window"))
         }
         else if(reaction.emoji.name === '✔️') {
             infoMessage.delete()
             .then(console.log("User accepted. Directing to communities\n"))
-            .then(communities.run(bot, message, 'info', player, channel))
+            .then(communites.run(bot, message, 'info', player, channel))
         }
         else if(reaction.emoji.name === '🔜') {
             infoMessage.delete()

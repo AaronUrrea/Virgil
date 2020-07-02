@@ -102,7 +102,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         
         //This waits for a reaction by using the emoji and user from the filter
         //It will send an error after 60 seconds and auto
-        await embedMessage.awaitReactions(filter, { max: 1, time: 300000, errors: ['time'] })
+        await embedMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
             .then(collected => {
                 const reaction = collected.first();
 

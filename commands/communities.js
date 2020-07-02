@@ -14,27 +14,36 @@ module.exports.run = async (bot, message, args, player, channel) => {
         } 
     }
 
+    if(args === 'info'){
+        player.roles.add(player.guild.roles.cache.get("725094697936093224")); //Add Marines
+        player.roles.add(player.guild.roles.cache.get("725094694173933599")); //Add Squad
+        player.roles.add(player.guild.roles.cache.get("725196526653014018")); //Add Awaiting Placement
+        player.roles.add(player.guild.roles.cache.get("725094695247675402")); //Add Callsign
+    }
+
     communitiesEmbed = new Discord.MessageEmbed()
-    .setColor('#ff9900')
-    .setTitle('111th Manticore Company')
-    .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
-    .setAuthor('UNSC', 'attachment://UNSC.png')
-    .setDescription('Besides the prominent Halo community we have here, we also have some side communities, such as Stellaris' +
-    ', Arma 3 Antistasi, and Arma 3 Zombies. You can also suggest adding communities, and if there is enough support, we can' +
-    ' add that game to our community!')
-    .setThumbnail('attachment://Manticore.png')
-	.addFields(
-        { name: '\u200B', value: '\u200B' },
-        { name: ((player.nickname == null ? player.user.username : player.nickname) + 
-                ', feel free to choose the communities you would like to subscribe to!\n'),
-                value: 'When you are complete, click [✔️] to advance to the rules.\n'+
-                'To remove a role, simply press the same button again!\n'+
-                '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n '+
-                '\nThis message will auto-resolve after 1 minute of inactivity'})
+        .setColor('#ff9900')
+        .setTitle('111th Manticore Company')
+        .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
+        .setAuthor('UNSC', 'attachment://UNSC.png')
+        .setDescription('Besides the prominent Halo community we have here, we also have some side communities, such as Stellaris' +
+        ', Arma 3 Antistasi, and Arma 3 Zombies. You can also suggest adding communities, and if there is enough support, we can' +
+        ' add that game to our community!')
+        .setThumbnail('attachment://Manticore.png')
+	    .addFields(
+            { name: '\u200B', value: '\u200B' },
+            { name: ((player.nickname == null ? player.user.username : player.nickname) + 
+                    ', feel free to choose the communities you would like to subscribe to!\n'),
+                    value: 'When you are complete, click [✔️] to advance to the rules.\n'+
+                    'To remove a role, simply press the same button again!\n'+
+                    '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n '+
+                    '\nThis message will auto-resolve after 1 minute of inactivity.'})
     
+                
     var communitiesMessage;
-    
-    if(args != 'loop'){
+
+
+    if(args != 'loop' || args === 'info'){
         communitiesMessage = await channel.send(communitiesEmbed)
 
         await communitiesMessage.react('🔵')
@@ -42,9 +51,11 @@ module.exports.run = async (bot, message, args, player, channel) => {
         .then(communitiesMessage.react('🟠'))
         .then(communitiesMessage.react('🟣'))
         .then(communitiesMessage.react('✔️'))
+
     }
 
     else if (args === 'loop'){
+        console.log("We got at loop")
         communitiesMessage = message;
     }
 
@@ -185,9 +196,9 @@ module.exports.run = async (bot, message, args, player, channel) => {
             .then(console.log("Roles assigned. Redirecting to rules"))
             
             //If the user timed out without picking a community, adds halo by default
-            if(!player.roles.cache.some(role => {
-                role.name === 'Stellaris' || role.name === 'Zombies' || role.name === 'Antistasi' || role.name === 'Halo'
-            })){
+            if((!player.roles.cache.some(role => role.name === 'Halo') && (!player.roles.cache.some(role => role.name === 'Antistasi')) 
+               && (!player.roles.cache.some(role => role.name === 'Zombies')) && !player.roles.cache.some(role => role.name === 'Stellaris')))
+            {
                 player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
                 .then(console.log("No roles added. Adding default 'Halo' role.\n"))
             }
@@ -198,9 +209,9 @@ module.exports.run = async (bot, message, args, player, channel) => {
         .then(console.log("User did not react. Interpreting absence as complete. Directing to Rules\n"))
         
         //If the user timed out without picking a community, adds halo by default
-        if(!player.roles.cache.some(role => {
-            role.name === 'Stellaris' || role.name === 'Zombies' || role.name === 'Antistasi' || role.name === 'Halo'
-        })){
+        if((!player.roles.cache.some(role => role.name === 'Halo') && (!player.roles.cache.some(role => role.name === 'Antistasi')) 
+        && (!player.roles.cache.some(role => role.name === 'Zombies')) && !player.roles.cache.some(role => role.name === 'Stellaris')))
+        {
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
             .then(console.log("No roles added. Adding default 'Halo' role.\n"))
         }

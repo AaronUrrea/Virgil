@@ -40,8 +40,6 @@ fs.readdir('./commands', (err, files) =>{
 // Create an event listener for new guild members
 client.on('guildMemberAdd', async (member) => {
     console.log('User ' + member.user.username + ' has joined the server!');
-    member.roles.add(member.guild.roles.cache.get("725094694173933599")); //Add Squad
-    member.roles.add(member.guild.roles.cache.get("725094695247675402")); //Add Callsign
     member.roles.add(member.guild.roles.cache.get("725106540700368947")); //Add Attributes
     member.roles.add(member.guild.roles.cache.get("725094695881015407")); //Add Communities
 
