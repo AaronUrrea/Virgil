@@ -6,13 +6,7 @@ const config = require('./config.json');
 client.on('ready', async () =>{
     console.log("This client is online \n");
     
-    client.user.setPresence({
-        game: {
-            name: 'with depression',
-            type: "STREAMING",
-            url: ""
-        }
-    });
+    client.user.setActivity(`on ${client.guilds.cache.size} servers`)
     //client.user.setActivity(`Quiet's mom`)
     //client.channels.cache.get('727237273023676436').send('Fuck you too Dryer.');
 
