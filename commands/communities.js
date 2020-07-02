@@ -183,12 +183,27 @@ module.exports.run = async (bot, message, args, player, channel) => {
         if(latestReaction.emoji.name === '✔️') {
             communitiesMessage.delete()
             .then(console.log("Roles assigned. Redirecting to rules"))
+            
+            //If the user timed out without picking a community, adds halo by default
+            if(!player.roles.cache.some(role => {
+                role.name === 'Stellaris' || role.name === 'Zombies' || role.name === 'Antistasi' || role.name === 'Halo'
+            })){
+                player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
+                .then(console.log("No roles added. Adding default 'Halo' role.\n"))
+            }
         }
     })
     .catch(collected => {
         communitiesMessage.delete()
-        .then(console.log("User did not react. Interpreting abcense as complete. Directing to Rules\n"))
-
+        .then(console.log("User did not react. Interpreting absence as complete. Directing to Rules\n"))
+        
+        //If the user timed out without picking a community, adds halo by default
+        if(!player.roles.cache.some(role => {
+            role.name === 'Stellaris' || role.name === 'Zombies' || role.name === 'Antistasi' || role.name === 'Halo'
+        })){
+            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
+            .then(console.log("No roles added. Adding default 'Halo' role.\n"))
+        }
     });
 }
 
