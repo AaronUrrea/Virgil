@@ -12,9 +12,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         })
 
         const webhooks = await channel.fetchWebhooks();
-        //console.log(webhooks)
         const webhook = await webhooks.first();
-        //console.log(webhook)
 
         console.log("Creating temporary Webhook: " + webhook.name + " @ " + channel.name);
 
@@ -32,13 +30,11 @@ module.exports.run = async (bot, message, args, player, channel) => {
 
         //This deletes the original command message
         try{
-            await message.delete()
-            .then(console.log("Original command deleted."));
+            message.delete()
+            .catch("Failed to delete message")
         }
-        catch(error){
-            console.log("Message not found. Skipping.")
-        }
-
+        catch{}
+        
         //This is the full embeded message with all of the images in the gallery
         let embedMessage = await webhook.send({embeds: [
             new Discord.MessageEmbed()
@@ -77,12 +73,10 @@ module.exports.run = async (bot, message, args, player, channel) => {
                                       .setAuthor('UNSC', 'attachment://UNSC.png')
                                       .setThumbnail('attachment://Manticore.png'),
         ]})
-        .then(console.log("Gallery sent."))
 
         //This deletes the webhook and the temporary gallery
         await webhook.delete()
         .then(tempGallery.delete())
-        .then(console.log("Temporary webhook deleted."))
 
         //If args is info, add a back reaction, else, just assign exit
         if(args === 'info'){
@@ -107,22 +101,25 @@ module.exports.run = async (bot, message, args, player, channel) => {
         //This waits for a reaction by using the emoji and user from the filter
         //It will send an error after 60 seconds and auto
         await embedMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
-            .then(collected => {
-                const reaction = collected.first();
-
-                if (reaction.emoji.name === '✖') {
-                    embedMessage.delete()
-                    .then(console.log("User reacted. Deleting message.\n"))}
-
-                if ((reaction.emoji.name === '🔙') && (args === 'info')) {
-                    embedMessage.delete()
-                    .then(console.log("User reacted. Returning to Info\n"))    
-                    .then(info.run(bot, message, 'gallery', player, channel));
-            }})
-            .catch(collected => {
+        .then(collected => {
+            const reaction = collected.first();
+            if (reaction.emoji.name === '✖') {
                 embedMessage.delete()
-                .then(console.log("User did not react. Deleting message.\n"))
-            });
+            }
+            else if ((reaction.emoji.name === '🔙') && (args === 'info')) {
+                embedMessage.delete()
+                .then(info.run(bot, '', 'gallery', player, channel));
+        }})
+        .catch(collected => {
+            if(args === 'info'){
+                embedMessage.delete()
+                .then(info.run(bot, '', 'gallery', player, channel))
+            }
+            else{
+                embedMessage.delete()
+            }
+        })
+    
 
     } catch (error) {
         console.error('Error trying to send: ', error);

@@ -5,33 +5,13 @@ const rules = require('./rules.js')
 
 module.exports.run = async (bot, message, args, player, channel) => {
   
-    
-
+    //If the command is before the loop, delete the user message
     if(args != 'loop'){
-        try{
-            await message.delete();
-        }
-        catch(error){
-            console.log("Message delete failure.")
-        } 
+        message.delete()
+        .catch(console.log("Failed to delete message"))
     }
 
-    if(args === 'info'){
-        player.roles.add(player.guild.roles.cache.get("725094694173933599")); //Add Squad
-        player.roles.add(player.guild.roles.cache.get("725196526653014018")); //Add Awaiting Placement
-
-
-        var name = player.user.username;
-        player.setNickname("[RCT] " + name)
-        .catch(error => {
-            console.log("Name too long, skipping...") })
-    
-
-    }
-    else if(args === 'conf'){
-        player.roles.add(player.guild.roles.cache.get("725098084949950519")); //Add Civilian
-    }
-
+    //Creates communitiesEmbed to be sent
     communitiesEmbed = new Discord.MessageEmbed()
         .setColor('#ff9900')
         .setTitle('111th Manticore Company')
@@ -50,11 +30,20 @@ module.exports.run = async (bot, message, args, player, channel) => {
                     '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n '+
                     '\nThis message will auto-resolve after 1 minute of inactivity.'})
     
-                
+    //This is the variable we are going to send to the channel
+    // Because this function loops, if it's a loop, then that means
+    // We should not send the message again.            
     var communitiesMessage;
 
+    //If args is loop, then we know the message exists
+    //  Thus, we assign communitiesMessage to the message we previously sent ourselves
+    if(args === 'loop'){
+        communitiesMessage = message;
+    }
 
-    if(args != 'loop' || args === 'info'){
+    //If args isn't loop, then we know the message doesn't exist
+    //  So, we have to send the message and at reactions to itss
+    else{
         communitiesMessage = await channel.send(communitiesEmbed)
 
         await communitiesMessage.react('🔵')
@@ -62,20 +51,16 @@ module.exports.run = async (bot, message, args, player, channel) => {
         .then(communitiesMessage.react('🟠'))
         .then(communitiesMessage.react('🟣'))
         .then(communitiesMessage.react('✔️'))
-
     }
 
-    else if (args === 'loop'){
-        console.log("We got at loop")
-        communitiesMessage = message;
-    }
-
+    //This is the filter that determines the emojis and the original member
     const filter =  (reaction, user) => {
         return ['🔵', '🔴', '🟠', '🟣', '✔️'].includes(reaction.emoji.name) && user.id === player.id; 
     };
     
-    const halo = communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")
-
+    //This waits for a reaction by using the emoji and user from the filter
+    //  It will send an error after 1 minute and auto-resolve
+    //  Using a switch here might've been easier, but this is Version 1.0 after all
     await communitiesMessage.awaitReactions(filter, {max: 1, time: 60000, errors: ['time'] })
     .then(async collected => {
 
@@ -93,7 +78,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
-            .then(console.log("Halo added to user, Restarting loop"))
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
 
@@ -107,7 +91,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
-            .then(console.log("Halo removed from user, Restarting loop"))
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
         //
@@ -123,7 +106,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Antistasi")).catch(console.error)
-            .then(console.log("Antistasi added to user, Restarting loop"))
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
 
@@ -137,7 +119,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Antistasi")).catch(console.error)
-            .then(console.log("Antistasi removed from user, Restarting loop"))
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
         //
@@ -153,7 +134,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Zombies")).catch(console.error)
-            .then(console.log("Zombies added to user, Restarting loop"))
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
 
@@ -167,7 +147,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Zombies")).catch(console.error)
-            .then(console.log("Zombies removed from user, Restarting loop"))
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
         //
@@ -183,7 +162,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Stellaris")).catch(console.error)
-            .then(console.log("Stellaris added to user, Restarting loop"))
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
 
@@ -197,44 +175,17 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Stellaris")).catch(console.error)
-            .then(console.log("Stellaris removed from user, Restarting loop"))
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
-        //
 
+        //If the user reacts to this, deletes the message
         if(latestReaction.emoji.name === '✔️') {
-            //If the user clicked out without picking a community, adds halo by default
-            if((!player.roles.cache.some(role => role.name === 'Halo') && (!player.roles.cache.some(role => role.name === 'Antistasi')) 
-               && (!player.roles.cache.some(role => role.name === 'Zombies')) && !player.roles.cache.some(role => role.name === 'Stellaris')))
-            {
-                player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
-                .then(console.log("No roles added. Adding default 'Halo' role.\n"))
-            }
-
-            //if(args === 'conf' || args === 'info'){
-                communitiesMessage.delete()
-                .then(console.log("Roles assigned. Redirecting to rules"))
-                .then(rules.run(bot, message, 'com', player, channel))
-            //}
-
-            //else{
-            //    communitiesMessage.delete()
-            //    .then(console.log("Roles assigned. Exiting windows"))
-            //}
+            communitiesMessage.delete()
         }
     })
     .catch(collected => {
-        //If the user timed out without picking a community, adds halo by default
-        if((!player.roles.cache.some(role => role.name === 'Halo') && (!player.roles.cache.some(role => role.name === 'Antistasi')) 
-        && (!player.roles.cache.some(role => role.name === 'Zombies')) && !player.roles.cache.some(role => role.name === 'Stellaris')))
-        {
-            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
-            .then(console.log("No roles added. Adding default 'Halo' role.\n"))
-        }
-
+        //If the user timed out, exits
         communitiesMessage.delete()
-        .then(console.log("Roles assigned. Redirecting to rules"))
-        .then(rules.run(bot, message, 'com', player, channel))
     });
 }
 

@@ -3,13 +3,9 @@ const config = require('../config.json');
 
 module.exports.run = async (bot, message, args, player, channel) => {
 
-    if(args != "com"){
-        try{
-            message.delete()
-            .then(console.log("Message deleted"))
-        }
-        catch(error) { console.log("Failed to delete message") }
-    }   
+
+    message.delete()
+    .catch(console.log("Message deleted"))
 
     let rulesEmbed = new Discord.MessageEmbed()
         .setColor('#ff9900')
@@ -52,15 +48,13 @@ module.exports.run = async (bot, message, args, player, channel) => {
                                             '3. No Blue on Blue.\n' +
                                             '4. Listen to the Zeus ' }, //: { name: '\u200B', value : '\u200B'} ),   
 
-            { name: ('After 1 minute, you may advance by clicking [🔜].'),  
+            { name: ('\u200B'),  
                     value : '\nThis message will auto-resolve after 5 minutes of inactivity.' })
 
     const rulesMessage = await channel.send(rulesEmbed);
 
-    setTimeout( () => {
-        rulesMessage.react('🔜')
-        .then(console.log("Finish reaction created"));
-    }, 60000);
+    rulesMessage.react('🔜')
+ 
     const filter = (reaction, user) => {
         return ['🔜'].includes(reaction.emoji.name) && user.id === player.id;
     }
@@ -71,14 +65,11 @@ module.exports.run = async (bot, message, args, player, channel) => {
 
         if(reaction.emoji.name === '🔜'){
             rulesMessage.delete()
-            .then(player.roles.remove(player.guild.roles.cache.get("717530067844202566"))) //Remove Visitor
-            .then(console.log("Mission accomplished, they're on their way."))
+
         }
     })
     .catch(collected => {
-        player.roles.remove(player.guild.roles.cache.get("717530067844202566")) //Remove Visitor
-        .then(console.log("Mission accomplished, they're on their way."))
-        .then(rulesMessage.delete())
+        rulesMessage.delete()
     });
     
 

@@ -77,6 +77,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
     //  Using a switch here might've been easier, but this is Version 1.0 after all
     await communitiesMessage.awaitReactions(filter, {max: 1, time: 60000, errors: ['time'] })
     .then(async collected => {
+        
         const userReactions = communitiesMessage.reactions.cache.filter(reaction => reaction.users.cache.has(player.id));
         const latestReaction = collected.first();
 

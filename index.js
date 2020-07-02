@@ -12,7 +12,6 @@ const config = require('./config.json');
 
 client.on('ready', async () =>{
     console.log("\nThis client is online \n");
-    
     client.user.setActivity(`on ${client.guilds.cache.size} servers`)
 
 });
@@ -84,7 +83,7 @@ client.on('message', message =>{
     if (message.guild && !message.channel.permissionsFor(message.guild.me).missing('SEND_MESSAGES')) return;
     
     //While I'm testing the bot, if they don't have Admin priveleges, they can't send commands
-    if(!message.member.permissions.toArray().includes("ADMINISTRATOR")) return;
+    //if(!message.member.permissions.toArray().includes("ADMINISTRATOR")) return;
 
 
     console.log("[" + 
