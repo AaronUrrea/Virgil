@@ -1,6 +1,9 @@
 const Discord = require('discord.js');
 const config = require('../config.json');
+
 const gallery = require('./gallery.js')
+const communites = require('./communities.js');
+
 const { watchFile } = require('fs');
 const { waitForDebugger } = require('inspector');
 
@@ -39,33 +42,52 @@ module.exports.run = async (bot, message, args, player, channel) => {
     .then(console.log("Sending info to: " + player.nickname))
 
     //This reacts an X to the embeded message   
-    await infoMessage.react('✖')
-        .then(infoMessage.react('✔️'))
-        .then(console.log("Exit reaction assigned."))
+    if(args === 'index' || args === 'gallery'){
+        await infoMessage.react('✖')
+            .then(infoMessage.react('✔️'))
+            .then(infoMessage.react('🔜'))
+            .then(console.log("Deny + Accept + Gallery reactions assigned"))
+    }
+    else{
+        await infoMessage.react('✖')
+        .then(infoMessage.react('🔜'))
+        .then(console.log("Exit + Gallery reactions assigned"))
+    }
         
-            //This is the filter that determines the emojis and the original member
-            const filter = (reaction, user) => {
-                return ['✖', '✔️'].includes(reaction.emoji.name) && user.id === player.id;
-            };
+        //This is the filter that determines the emojis and the original member
+        const filter = (reaction, user) => {
+            if(args === 'index' || args === 'gallery'){
+                return ['✖', '✔️', '🔜'].includes(reaction.emoji.name) && user.id === player.id;
+            }
+            else{
+                return ['✖', '🔜'].includes(reaction.emoji.name) && user.id === player.id;
+            }
+        }
+
             
     //This waits for a reaction by using the emoji and user from the filter
-    //It will send an error after 60 seconds and auto
+    //It will send an error after 5 minutes and auto
     await infoMessage.awaitReactions(filter, { max: 1, time: 300000, errors: ['time'] })
     .then(collected => {
         const reaction = collected.first();
-    
+        
         if (reaction.emoji.name === '✖') {
             infoMessage.delete()
             .then(console.log("User reacted. Deleting message."))
         }
         else if(reaction.emoji.name === '✔️') {
             infoMessage.delete()
-            .then(console.log("User reacted. Directing to Gallery.\n"))
+            .then(console.log("User accepted. Directing to communities\n"))
+            .then(communities.run(bot, message, 'info', player, channel))
+        }
+        else if(reaction.emoji.name === '🔜') {
+            infoMessage.delete()
+            .then(console.log("User reacted. Directing to gallery\n"))
             .then(gallery.run(bot, message, 'info', player, channel))
         }})
     .catch(collected => {
         infoMessage.delete()
-        .then(console.log("User did not react. Deleting message.\n"))
+        .then(console.log("User did not react. Interpreting abcense as a no. Directing to communities\n"))
     });
 }
 

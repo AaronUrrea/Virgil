@@ -105,7 +105,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         await embedMessage.awaitReactions(filter, { max: 1, time: 300000, errors: ['time'] })
             .then(collected => {
                 const reaction = collected.first();
-        
+
                 if (reaction.emoji.name === '✖') {
                     embedMessage.delete()
                     .then(console.log("User reacted. Deleting message.\n"))}

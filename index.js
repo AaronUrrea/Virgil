@@ -59,9 +59,6 @@ client.on('guildMemberAdd', async (member) => {
 
     let welcomeMessage = await member.guild.channels.cache.find(c => c.name === "space-port").send(welcomeEmbed);
 
-        console.log(member)
-        console.log(member)
-
     //This reacts an X to the embeded message   
     await welcomeMessage.react('✖')
         .then(welcomeMessage.react('✔️'))
@@ -80,7 +77,11 @@ client.on('guildMemberAdd', async (member) => {
 
     if (reaction.emoji.name === '✖') {
         console.log("User is not here for Halo :(")
-        .then(welcomeMessage.delete());
+
+        let commandFile = client.commands.get('confirmation'); 
+        commandFile.run(client, '', 'index', member, welcomeMessage.channel)
+
+        welcomeMessage.delete();
     }
     else if(reaction.emoji.name === '✔️') { 
         console.log("User is here for Halo :). Redirecting to event")
@@ -92,6 +93,7 @@ client.on('guildMemberAdd', async (member) => {
 });
 
 client.on('message', message =>{
+
     // Make sure bots can't run this command
     if (message.author.bot) return;
 
@@ -116,14 +118,14 @@ client.on('message', message =>{
     
     //console.log("test: " + messageArray.toString()[0])
 
-    //If the first letter isnt prefix, returns
-    if(cmd.charAt(0) != prefix) return;
-
     //Boolean as to whether the command exists
     let commandFile = client.commands.get(cmd.slice(prefix.length)); 
 
+    //If the first letter isnt prefix, returns
+    if(cmd.charAt(0) != prefix) return
+
     //If it has prefix, but isn't a vilid command
-    if((cmd.charAt(0) === prefix) && (!commandFile)){
+    else if((cmd.charAt(0) === prefix) && (!commandFile)){
         console.log("\n! INVALID COMMAND USED ! : " + cmd + "\n")
         message.reply("that is an invalid command. Would you like to try again?")
     }
