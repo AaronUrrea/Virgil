@@ -62,6 +62,10 @@ module.exports.run = async (bot, message, args, player, channel) => {
             new Discord.MessageEmbed().attachFiles(['./attachments/Gallery3.png'])
                                       .setColor('#ff9900')
                                       .setImage('attachment://Gallery3.png'),
+
+            new Discord.MessageEmbed().attachFiles(['./attachments/Gallery4.png'])
+                                      .setColor('#ff9900')
+                                      .setImage('attachment://Gallery4.png'),                          
                                       
             new Discord.MessageEmbed()
                                       .setColor('#ff9900')

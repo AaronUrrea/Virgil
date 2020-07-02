@@ -36,7 +36,8 @@ module.exports.run = async (bot, message, args, player, channel) => {
         { name: 'Friday', value: 'Training, 7:30PM CST Load In, 8:00PM CST Briefing/Step Off.', inline: true },
         { name: 'Sunday', value: 'Story Operation, 7:30PM CST Load In, 8:00PM CST Briefing/Step Off.', inline: true },
         { name: 'BCT, Side Ops and Fun Ops are subject to change, and will be scheduled flexibly.', value: '\u200B'},   
-        { name: '\u200B', value: '\u200B' },
+        { name: 'Teamspeak:', value: 'IP: 185.249.196.154:9104 \nPassword: 9MILGAMINGAB'},
+        { name: 'Arma 3:', value: 'IP: nanw-ogs3.armahosts.com:2582 \nPassword: 9MILGAMINGAB'},
         { name: ((player.nickname == null ? player.user.username : player.nickname) + 
                 ', there are several actions you can select:'), 
                 value: (args === 'index' || args === 'gallery' ?

@@ -20,8 +20,13 @@ module.exports.run = async (bot, message, args, player, channel) => {
         player.roles.add(player.guild.roles.cache.get("725094694173933599")); //Add Squad
         player.roles.add(player.guild.roles.cache.get("725196526653014018")); //Add Awaiting Placement
 
+
         var name = player.user.username;
-        player.setNickname("[RCT]" + name)
+        player.setNickname("[RCT] " + name)
+        .catch(error => {
+            console.log("Name too long, skipping...") })
+    
+
     }
     else if(args === 'conf'){
         player.roles.add(player.guild.roles.cache.get("725098084949950519")); //Add Civilian
