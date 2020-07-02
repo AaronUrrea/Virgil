@@ -35,6 +35,8 @@ fs.readdir('./commands', (err, files) =>{
     })
 });
 
+
+
 // Create an event listener for new guild members
 client.on('guildMemberAdd', async (member) => {
     console.log('User ' + member.user.username + ' has joined the server!');

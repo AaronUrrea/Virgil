@@ -1,17 +1,20 @@
 const Discord = require('discord.js');
 const config = require('../config.json');
+const communities = require('./communities.js')
 //const rules = require('./rules.js')
 
 module.exports.run = async (bot, message, args, player, channel) => {
-    
-    try{
-        await message.delete();
+  
+    if(args != 'loop'){
+        try{
+            await message.delete();
+        }
+        catch(error){
+            console.log("Message delete failure.")
+        } 
     }
-    catch(error){
-        console.log("Message delete failure.")
-    } 
-    
-    let communitiesEmbed = new Discord.MessageEmbed()
+
+    communitiesEmbed = new Discord.MessageEmbed()
     .setColor('#ff9900')
     .setTitle('111th Manticore Company')
     .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
@@ -27,103 +30,165 @@ module.exports.run = async (bot, message, args, player, channel) => {
                 value: 'When you are complete, click [✔️] to advance to the rules.\n'+
                 'To remove a role, simply press the same button again!\n'+
                 '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n '+
-                '\nThis message will auto-resolve in 5 Minutes.'})
+                '\nThis message will auto-resolve after 1 minute of inactivity'})
+    
+    var communitiesMessage;
+    
+    if(args != 'loop'){
+        communitiesMessage = await channel.send(communitiesEmbed)
 
-    communitiesMessage = await channel.send(communitiesEmbed)
-
-    await communitiesMessage.react('🔵')
+        await communitiesMessage.react('🔵')
         .then(communitiesMessage.react('🔴'))
         .then(communitiesMessage.react('🟠'))
         .then(communitiesMessage.react('🟣'))
         .then(communitiesMessage.react('✔️'))
+    }
+
+    else if (args === 'loop'){
+        communitiesMessage = message;
+    }
 
     const filter =  (reaction, user) => {
         return ['🔵', '🔴', '🟠', '🟣', '✔️'].includes(reaction.emoji.name) && user.id === player.id; 
     };
+    
+    const halo = communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")
 
-    await communitiesMessage.awaitReactions(filter, {time: 300000})
-    .then(collected => {
-        const reaction = collected.first();
+    await communitiesMessage.awaitReactions(filter, {max: 1, time: 60000, errors: ['time'] })
+    .then(async collected => {
 
-        console.log("We got here")
-
-        //Putting the roles down as variables
-        var halo = member.guild.roles.cache.find(role => role.name === "Halo")
-        .catch(error => console.error('Failed to find Halo: ', error));
-
-        var antistasi = member.guild.roles.cache.find(role => role.name === "Antistasi")
-        .catch(error => console.error('Failed to find Antistasi: ', error));
-
-        var zombies = member.guild.roles.cache.find(role => role.name === "Zombies")
-        .catch(error => console.error('Failed to remove Zombies: ', error));
-
-        var stellaris = member.guild.roles.cache.find(role => role.name === "Stellaris")
-        .catch(error => console.error('Failed to remove Stellaris: ', error));
-        
-        //Applying the variables as roles
-        //Using a switch here might be more efficient, but since it's only four roles, that's
-        //Only 8 checks I have to do
-
-        console.log("We got there")
+        const userReactions = communitiesMessage.reactions.cache.filter(reaction => reaction.users.cache.has(player.id));
+        const latestReaction = collected.first();
 
         //Halo
-        if (reaction.emoji.name === '🔵') {
-            console.log("Player have Halo? " + (player.roles.cache.some(role => role.name === 'Halo')))
+        if(latestReaction.emoji.name === '🔵' && !player.roles.cache.some(role => role.name === 'Halo')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
 
-            console.log("User reacted. Giving Halo Role")
-            .then(player.roles.cache.add(halo))
-            .then(communitiesMessage.reactions.cache.get('🔵').remove())
-            .then(communitiesMessage.react('🔵'))
-            .catch(error => console.error('Failed to remove Halo reactions: ', error));
-        }
-        else if(reaction.emoji.name === '🔵' && player.roles.cache.some(role => role.name === 'Halo')) {
-            console.log("User reacted. Removing Halo Role")
-            .then(player.roles.cache.remove(halo))
-            .then(communitiesMessage.reactions.cache.get('🔵').remove())
-            .then(communitiesMessage.react('🔵'))
-            .catch(error => console.error('Failed to remove Halo reactions: ', error));
+            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
+            .then(console.log("Halo added to user, Restarting loop"))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
 
-        ////Antistasi
-        //if(reaction.emoji.name === '🔴') {
-        //    console.log("User reacted. Giving Antistasi Role")
-//
-        //}
-        //if (reaction.emoji.name === '🔵' && !player.roles.cache.some(role => role.name === 'Halo')) {
-        //    console.log("User reacted. Giving Halo Role")
-        //    message.reactions.cache.get('🔵').remove().catch(error => console.error('Failed to remove reactions: ', error));
-        //}
+        if(latestReaction.emoji.name === '🔵' && player.roles.cache.some(role => role.name === 'Halo')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
+
+            player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
+            .then(console.log("Halo removed from user, Restarting loop"))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }
         //
-        ////Zombies
-        //if (reaction.emoji.name === '🔵' && !player.roles.cache.some(role => role.name === 'Halo')) {
-        //    console.log("User reacted. Giving Halo Role")
-        //    message.reactions.cache.get('🔵').remove().catch(error => console.error('Failed to remove reactions: ', error));
-        //}
-        //if(reaction.emoji.name === '🟠') {
-        //    console.log("User reacted. Giving Zombies Role")
-//
-        //}
-//
-        ////Stellaris
-        //if (reaction.emoji.name === '🔵' && !player.roles.cache.some(role => role.name === 'Halo')) {
-        //    console.log("User reacted. Giving Halo Role")
-        //    message.reactions.cache.get('🔵').remove().catch(error => console.error('Failed to remove reactions: ', error));
-        //}
-        //if(reaction.emoji.name === '🟣') {
-        //    console.log("User reacted. Giving Stellaris Role")
-//
-        //}
-//
-        ////When they are finished
-        if(reaction.emoji.name === '✔️') {
-            communitiesMessage.delete()
-            .then(console.log("User reacted. Directing to rules\n"))
+        
+        //Antistasi
+        if(latestReaction.emoji.name === '🔴' && !player.roles.cache.some(role => role.name === 'Antistasi')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
 
+            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Antistasi")).catch(console.error)
+            .then(console.log("Antistasi added to user, Restarting loop"))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }
+
+        if(latestReaction.emoji.name === '🔴' && player.roles.cache.some(role => role.name === 'Antistasi')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
+
+            player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Antistasi")).catch(console.error)
+            .then(console.log("Antistasi removed from user, Restarting loop"))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }
+        //
+
+        //Zombies
+        if(latestReaction.emoji.name === '🟠' && !player.roles.cache.some(role => role.name === 'Zombies')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
+
+            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Zombies")).catch(console.error)
+            .then(console.log("Zombies added to user, Restarting loop"))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }
+
+        if(latestReaction.emoji.name === '🟠' && player.roles.cache.some(role => role.name === 'Zombies')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
+
+            player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Zombies")).catch(console.error)
+            .then(console.log("Zombies removed from user, Restarting loop"))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }
+        //
+
+        //Stellaris
+        if(latestReaction.emoji.name === '🟣' && !player.roles.cache.some(role => role.name === 'Stellaris')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
+
+            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Stellaris")).catch(console.error)
+            .then(console.log("Stellaris added to user, Restarting loop"))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }
+
+        if(latestReaction.emoji.name === '🟣' && player.roles.cache.some(role => role.name === 'Stellaris')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
+
+            player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Stellaris")).catch(console.error)
+            .then(console.log("Stellaris removed from user, Restarting loop"))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }
+        //
+
+        if(latestReaction.emoji.name === '✔️') {
+            communitiesMessage.delete()
+            .then(console.log("Roles assigned. Redirecting to rules"))
         }
     })
     .catch(collected => {
         communitiesMessage.delete()
         .then(console.log("User did not react. Interpreting abcense as complete. Directing to Rules\n"))
+
     });
 }
 
