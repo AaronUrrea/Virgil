@@ -35,7 +35,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
 		{ name: '**SCHEDULE:**', value: '\u200B'},
         { name: 'Friday', value: 'Training, 7:30PM CST Load In, 8:00PM CST Briefing/Step Off.', inline: true },
         { name: 'Sunday', value: 'Story Operation, 7:30PM CST Load In, 8:00PM CST Briefing/Step Off.', inline: true },
-        { name: 'BCT, Side Ops and Fun Ops are subject to change, and will be scheduled flexibly.', value: '\u200B'},   
+        { name: '\u200B', value: 'BCT, Side Ops and Fun Ops are subject to change, and will be scheduled flexibly.'},   
         { name: '\u200B', value: '\u200B' },
         { name: ((player.nickname == null ? player.user.username : player.nickname) + 
                 ', there are several actions you can select:'), 
@@ -71,7 +71,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
         }
 
-
             
     //This waits for a reaction by using the emoji and user from the filter
     //It will send an error after 5 minutes and auto
@@ -105,5 +104,5 @@ module.exports.run = async (bot, message, args, player, channel) => {
 }
 
 module.exports.config = {
-    name: "info"
+    name: "manual"
 }

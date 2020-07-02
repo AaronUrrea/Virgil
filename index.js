@@ -40,6 +40,8 @@ fs.readdir('./commands', (err, files) =>{
 // Create an event listener for new guild members
 client.on('guildMemberAdd', async (member) => {
     console.log('User ' + member.user.username + ' has joined the server!');
+
+    member.roles.add(member.guild.roles.cache.get("717530067844202566")); //Add Visitor
     member.roles.add(member.guild.roles.cache.get("725106540700368947")); //Add Attributes
     member.roles.add(member.guild.roles.cache.get("725094695881015407")); //Add Communities
 
@@ -104,7 +106,7 @@ client.on('message', message =>{
     if (message.guild && !message.channel.permissionsFor(message.guild.me).missing('SEND_MESSAGES')) return;
     
     //While I'm testing the bot, if they don't have Admin priveleges, they can't send commands
-    if(!message.member.permissions.toArray().includes("ADMINISTRATOR")) return;
+    //if(!message.member.permissions.toArray().includes("ADMINISTRATOR")) return;
 
     console.log("[" + 
                 (message.member.nickname == null ? message.member.user.username : message.member.nickname)  

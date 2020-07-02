@@ -1,10 +1,12 @@
 const Discord = require('discord.js');
 const config = require('../config.json');
 const communities = require('./communities.js')
-//const rules = require('./rules.js')
+const rules = require('./rules.js')
 
 module.exports.run = async (bot, message, args, player, channel) => {
   
+    
+
     if(args != 'loop'){
         try{
             await message.delete();
@@ -15,10 +17,14 @@ module.exports.run = async (bot, message, args, player, channel) => {
     }
 
     if(args === 'info'){
-        player.roles.add(player.guild.roles.cache.get("725094697936093224")); //Add Marines
         player.roles.add(player.guild.roles.cache.get("725094694173933599")); //Add Squad
         player.roles.add(player.guild.roles.cache.get("725196526653014018")); //Add Awaiting Placement
-        player.roles.add(player.guild.roles.cache.get("725094695247675402")); //Add Callsign
+
+        var name = player.user.username;
+        player.setNickname("[RCT]" + name)
+    }
+    else if(args === 'conf'){
+        player.roles.add(player.guild.roles.cache.get("725098084949950519")); //Add Civilian
     }
 
     communitiesEmbed = new Discord.MessageEmbed()
@@ -192,22 +198,27 @@ module.exports.run = async (bot, message, args, player, channel) => {
         //
 
         if(latestReaction.emoji.name === '✔️') {
-            communitiesMessage.delete()
-            .then(console.log("Roles assigned. Redirecting to rules"))
-            
-            //If the user timed out without picking a community, adds halo by default
+            //If the user clicked out without picking a community, adds halo by default
             if((!player.roles.cache.some(role => role.name === 'Halo') && (!player.roles.cache.some(role => role.name === 'Antistasi')) 
                && (!player.roles.cache.some(role => role.name === 'Zombies')) && !player.roles.cache.some(role => role.name === 'Stellaris')))
             {
                 player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
                 .then(console.log("No roles added. Adding default 'Halo' role.\n"))
             }
+
+            //if(args === 'conf' || args === 'info'){
+                communitiesMessage.delete()
+                .then(console.log("Roles assigned. Redirecting to rules"))
+                .then(rules.run(bot, message, 'com', player, channel))
+            //}
+
+            //else{
+            //    communitiesMessage.delete()
+            //    .then(console.log("Roles assigned. Exiting windows"))
+            //}
         }
     })
     .catch(collected => {
-        communitiesMessage.delete()
-        .then(console.log("User did not react. Interpreting absence as complete. Directing to Rules\n"))
-        
         //If the user timed out without picking a community, adds halo by default
         if((!player.roles.cache.some(role => role.name === 'Halo') && (!player.roles.cache.some(role => role.name === 'Antistasi')) 
         && (!player.roles.cache.some(role => role.name === 'Zombies')) && !player.roles.cache.some(role => role.name === 'Stellaris')))
@@ -215,6 +226,10 @@ module.exports.run = async (bot, message, args, player, channel) => {
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
             .then(console.log("No roles added. Adding default 'Halo' role.\n"))
         }
+
+        communitiesMessage.delete()
+        .then(console.log("Roles assigned. Redirecting to rules"))
+        .then(rules.run(bot, message, 'com', player, channel))
     });
 }
 
