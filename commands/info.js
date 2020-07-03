@@ -7,7 +7,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
     
     try{
         message.delete()
-        .catch(console.log("Failed to delete message"))
+        .catch()
     }
     catch{}
     
@@ -40,7 +40,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
 
 
     let infoMessage = await channel.send(infoEmbed)
-    .then(console.log("Sending info to: " + player.user.username))
 
     //This reacts an X to the embeded message   
 

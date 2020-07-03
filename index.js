@@ -12,7 +12,7 @@ const config = require('./config.json');
 
 client.on('ready', async () =>{
     console.log("\nThis client is online \n");
-    client.user.setActivity(`on ${client.guilds.cache.size} servers`)
+    client.user.setActivity(`?help for commands.`)
 
 });
 
@@ -104,19 +104,42 @@ client.on('message', message =>{
     //If the first letter isnt prefix, returns
     if(cmd.charAt(0) != prefix) return
 
-    //If the first letter of the first word is prefix, and the following word is a valid command
-    else if((cmd.charAt(0) === prefix) && (commandFile)){
-        console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")
-        commandFile.run(client, message, args, (message.member), (message.channel));
+    //If the channel sent is incorrect
+    else if(message.channel.id != "728382898574458920"){
+        wrongChannel(message)
+        .then(message.delete())
+        .catch()
+    }    
+
+    //If the command inputted is invalid
+    else if(!commandFile){
+        wrongCommand(message)
+        .then(message.delete())
+        .catch()
     }
 
     //If it has prefix, but isn't a valid command
-    else if((cmd.charAt(0) === prefix) && (!commandFile)){
-        console.log("\n! INVALID COMMAND USED ! : " + cmd + "\n")
-        message.reply("that is an invalid command. Would you like to try again?")
+    else if(commandFile){
+        console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")
+        commandFile.run(client, message, args, (message.member), (message.channel));
     }        
     
 });
+
+async function wrongChannel(message) {
+    let reply = await message.channel.send(`<@${message.member.id}>, this is the wrong channel for commands. Refer to *#requests*.`)
+    .then(setTimeout(async () => {
+        await reply.delete();
+    }, 5000))
+}
+
+async function wrongCommand(message) {
+    let reply = await message.channel.send(`<@${message.member.id}>, that command does not exist. Refer to *?help*.`)
+    .then(setTimeout(async () => {
+        await reply.delete();
+    }, 5000))
+}
+
 
 //Logs the client in
 client.login(config.TOKEN);

@@ -26,7 +26,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
                 .setThumbnail('attachment://Manticore.png'))
-        .then(console.log("Accessing Gallery."))
 
         //This deletes the original command message
         try{
@@ -76,17 +75,17 @@ module.exports.run = async (bot, message, args, player, channel) => {
 
         //This deletes the webhook and the temporary gallery
         await tempGallery.delete()
+        .then(console.log("Deleting temporary Webhook: " + webhook.name + " @ " + channel.name+"\n"))
         .then(webhook.delete())
+
 
         //If args is info, add a back reaction, else, just assign exit
         if(args === 'info'){
             await embedMessage.react('🔙')
-            .then(console.log("Redirect reaction assigned."))
         }
 
         else{
             await embedMessage.react('✖')
-            .then(console.log("Exit reaction assigned."))
         }
     
         //This is the filter that determines the emojis and the original member
