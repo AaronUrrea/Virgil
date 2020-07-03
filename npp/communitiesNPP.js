@@ -16,6 +16,8 @@ module.exports.run = async (bot, message, args, player, channel) => {
         player.setNickname("[RCT] " + player.user.username.toString().substring(0, 25))
         .catch(error => {
             console.log("Name too long, skipping...") })
+        .then(bot.channels.cache.get("725412224440598598").send(
+            `**All hands on deck**, <@&${"725409624236490784"}>, we have a new Recruit awaiting placement! *${player.user.username}*`))
     }
 
     //If the user decided to be a civilian
@@ -192,26 +194,17 @@ module.exports.run = async (bot, message, args, player, channel) => {
 
         //Finished with adding roles
         if(latestReaction.emoji.name === '✔️') {
-            //If the user clicked out without picking a community, adds halo by default
-            if((!player.roles.cache.some(role => role.name === 'Halo') && (!player.roles.cache.some(role => role.name === 'Antistasi')) 
-               && (!player.roles.cache.some(role => role.name === 'Zombies')) && !player.roles.cache.some(role => role.name === 'Stellaris')))
-            {
-                player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
-            }
-
             //Deletes the message, and then remove the Visitor role
             communitiesMessage.delete()
             .then(player.roles.remove(player.guild.roles.cache.get("717530067844202566"))) //Remove Visitor
             .then(console.log("Mission accomplished, they're on their way."))
+
+            if(args === 'marine' && !player.roles.cache.some(role => role.name === 'Halo')){
+                player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
+            }
         }
     })
     .catch(collected => {
-        //If the user timed out without picking a community, adds halo by default
-        if((!player.roles.cache.some(role => role.name === 'Halo') && (!player.roles.cache.some(role => role.name === 'Antistasi')) 
-        && (!player.roles.cache.some(role => role.name === 'Zombies')) && !player.roles.cache.some(role => role.name === 'Stellaris')))
-        {
-            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo"))
-        }
 
         //Deletes the message, and then remove the Visitor role
         communitiesMessage.delete()

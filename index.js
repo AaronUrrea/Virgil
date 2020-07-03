@@ -18,7 +18,7 @@ client.on('ready', async () =>{
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Commands/New-Player-Process initialization
+// New-Player-Process initialization
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,7 +59,13 @@ fs.readdir('./npp', (err, files) =>{
 // Create an event listener for new guild members
 client.on('guildMemberAdd', async (member) => {
     
-    console.log("we get here. " + member.user.username)
+    client.channels.cache.get('728413318804406333').send(new Discord.MessageEmbed()
+        .setColor('#228B22')
+        .setTitle(member.user.username + ` has just docked!`)
+        .attachFiles(['./attachments/UNSC.png'])
+        .setAuthor('UNSC', 'attachment://UNSC.png')
+        .setThumbnail(member.user.avatarURL()))
+
     let commandFile = client.npp.get('intro'); 
     commandFile.run(client, 'index', member, client.channels.cache.get("728031364468834374"));
     
@@ -67,7 +73,24 @@ client.on('guildMemberAdd', async (member) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Message/Comamnds Handler
+// Player leaving
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+client.on('guildMemberRemove', async (member) => {
+    
+    client.channels.cache.get('728413318804406333').send(new Discord.MessageEmbed()
+        .setColor('#8B0000')
+        .setTitle(member.user.username + ` has disembarked!`)
+        .attachFiles(['./attachments/UNSC.png'])
+        .setAuthor('UNSC', 'attachment://UNSC.png')
+        .setThumbnail(member.user.avatarURL()))
+});
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Message/Commands Handler
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -101,12 +124,19 @@ client.on('message', message =>{
     //Boolean as to whether the command exists
     let commandFile = client.commands.get(cmd.slice(prefix.length)); 
 
-    //If the first letter isnt prefix, returns
-    if(cmd.charAt(0) != prefix) return
+    //If the first letter isnt prefix, and its not in #requests
+    if(cmd.charAt(0) != prefix && message.channel.id != "728382898574458920") return
 
-    //If the channel sent is incorrect
-    else if(message.channel.id != "728382898574458920"){
+    //If it's not in #requests, but does have the prefix
+    else if(cmd.charAt(0) === prefix && message.channel.id != "728382898574458920"){
         wrongChannel(message)
+        .then(message.delete())
+        .catch()
+    }    
+
+    //If it is in #requests, but doesn't have a prefix
+    else if(cmd.charAt(0) != prefix && message.channel.id === "728382898574458920"){
+        onlyCommands(message)
         .then(message.delete())
         .catch()
     }    
@@ -118,7 +148,7 @@ client.on('message', message =>{
         .catch()
     }
 
-    //If it has prefix, but isn't a valid command
+    //If it has prefix and is valid
     else if(commandFile){
         console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")
         commandFile.run(client, message, args, (message.member), (message.channel));
@@ -140,6 +170,18 @@ async function wrongCommand(message) {
     }, 5000))
 }
 
+async function onlyCommands(message) {
+    let reply = await message.channel.send(`<@${message.member.id}>, only commands are allowed in this channel. Refer to *?help*.`)
+    .then(setTimeout(async () => {
+        await reply.delete();
+    }, 5000))
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Misc Code
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Logs the client in
 client.login(config.TOKEN);

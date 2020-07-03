@@ -58,7 +58,7 @@ module.exports.run = async (bot, args, player, channel) => {
     setTimeout( () => {
         rulesMessage.react('🔜')
         .then(console.log("Finish reaction created"));
-    }, 60000);
+    }, 5000);
 
     //This is the filter that determines the emojis and the original member
     const filter = (reaction, user) => {
