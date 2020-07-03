@@ -5,12 +5,6 @@ const rules = require('./rules.js')
 
 module.exports.run = async (bot, message, args, player, channel) => {
   
-    //If the command is before the loop, delete the user message
-    if(args != 'loop'){
-        message.delete()
-        .catch(console.log("Failed to delete message"))
-    }
-
     //Creates communitiesEmbed to be sent
     communitiesEmbed = new Discord.MessageEmbed()
         .setColor('#ff9900')

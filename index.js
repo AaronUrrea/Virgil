@@ -143,21 +143,21 @@ client.on('message', message =>{
     else if(cmd.charAt(0) === prefix && message.channel.id != "728382898574458920"){
         wrongChannel(message)
         .then(message.delete())
-        .catch()
+        .catch("Message delete failure")
     }    
 
     //If it is in #requests, but doesn't have a prefix
     else if(cmd.charAt(0) != prefix && message.channel.id === "728382898574458920"){
         onlyCommands(message)
         .then(message.delete())
-        .catch()
+        .catch("Message delete failure")
     }    
 
     //If the command inputted is invalid
     else if(!commandFile){
         wrongCommand(message)
         .then(message.delete())
-        .catch()
+        .catch("Message delete failure")
     }
 
     //If it has prefix and is valid
@@ -165,6 +165,7 @@ client.on('message', message =>{
         console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")
         commandFile.run(client, message, args, (message.member), (message.channel))
         .then(message.delete())
+        .catch("Message delete failure")
     }        
     
 });

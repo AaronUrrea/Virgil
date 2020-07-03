@@ -3,10 +3,6 @@ const config = require('../config.json');
 
 module.exports.run = async (bot, message, args, player, channel) => {
 
-
-    message.delete()
-    .catch(console.log("Message deleted"))
-
     let rulesEmbed = new Discord.MessageEmbed()
         .setColor('#ff9900')
         .setTitle('111th Manticore Company')

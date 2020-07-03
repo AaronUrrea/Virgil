@@ -4,13 +4,7 @@ const config = require('../config.json');
 const gallery = require('./gallery.js')
 
 module.exports.run = async (bot, message, args, player, channel) => {
-    
-    try{
-        message.delete()
-        .catch()
-    }
-    catch{}
-    
+
     let infoEmbed = new Discord.MessageEmbed()
     .setColor('#ff9900')
     .setTitle('111th Manticore Company')

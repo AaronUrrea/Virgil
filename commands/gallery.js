@@ -26,13 +26,6 @@ module.exports.run = async (bot, message, args, player, channel) => {
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
                 .setThumbnail('attachment://Manticore.png'))
-
-        //This deletes the original command message
-        try{
-            message.delete()
-            .catch("Failed to delete message")
-        }
-        catch{}
         
         //This is the full embeded message with all of the images in the gallery
         let embedMessage = await webhook.send({embeds: [

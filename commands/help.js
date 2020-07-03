@@ -5,11 +5,6 @@ const config = require('../config.json');
 
 module.exports.run = async (bot, message, args, player, channel) => {
 
-    try{
-        message.delete()
-    }
-    catch(error) { console.log("Failed to delete message")}
-
     let sentHelp = await message.channel.send(new Discord.MessageEmbed()
         .setColor('#ff9900')
         .setTitle('111th Manticore Company')
