@@ -163,7 +163,8 @@ client.on('message', message =>{
     //If it has prefix and is valid
     else if(commandFile){
         console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")
-        commandFile.run(client, message, args, (message.member), (message.channel));
+        commandFile.run(client, message, args, (message.member), (message.channel))
+        .then(message.delete())
     }        
     
 });
