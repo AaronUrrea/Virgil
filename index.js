@@ -9,12 +9,25 @@ const config = require('./config.json');
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 client.on('ready', async () =>{
     console.log("\nThis client is online \n");
     client.user.setActivity(`?help for commands.`)
 
 });
+
+//Send a message to any channel on start up
+//client.channels.cache.get("728382898574458920").send(new Discord.MessageEmbed()
+//.setColor('#ff9900')
+//.setTitle('111th Manticore Company')
+//.setDescription('Use this channel to command me do complete actions.\nTo get started, type "?help"')
+//.attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
+//.setAuthor('UNSC', 'attachment://UNSC.png')
+//.setThumbnail('attachment://Manticore.png'))
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -107,7 +120,6 @@ client.on('message', message =>{
     
     //While I'm testing the bot, if they don't have Admin priveleges, they can't send commands
     //if(!message.member.permissions.toArray().includes("ADMINISTRATOR")) return;
-
 
     console.log("[" + 
                 (message.member.nickname == null ? message.member.user.username : message.member.nickname)  
