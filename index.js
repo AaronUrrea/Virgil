@@ -160,6 +160,7 @@ client.on('message', message =>{
         .catch("Message delete failure")
     }
 
+
     //If it has prefix and is valid
     else if(commandFile){
         console.log("\n! VALID COMMAND DETECTED ! : " + cmd +"\n")

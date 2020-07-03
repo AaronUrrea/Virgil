@@ -17,6 +17,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             { name: '?gallery', value: 'Accesses the gallery of the server.' },
             { name: '?rules', value: 'Accesses the rule panel of the server.' },
             { name: '?communities', value: 'Allows you to change your "communities" roles.' },
+            { name: '?suggestion', value: 'Allows you to suggest an idea to the community.\nFor more info, type "?suggestion help"'},
             { name: "\u200B", value: 'Click [✖] to exit.' +
             '\nThis message will auto-delete in 1 minute.'}))
         
