@@ -21,7 +21,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
                     ', feel free to choose the communities you would like to subscribe to!\n'),
                     value: 'When you are complete, click [✔️] to advance to the rules.\n'+
                     'To remove a role, simply press the same button again!\n'+
-                    '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n '+
+                    '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n[🟤] for 7 Days to Die.\n '+
                     '\nThis message will auto-resolve after 1 minute of inactivity.'})
     
     //This is the variable we are going to send to the channel
@@ -44,12 +44,13 @@ module.exports.run = async (bot, message, args, player, channel) => {
         .then(communitiesMessage.react('🔴'))
         .then(communitiesMessage.react('🟠'))
         .then(communitiesMessage.react('🟣'))
+        .then(communitiesMessage.react('🟤'))
         .then(communitiesMessage.react('✔️'))
     }
 
     //This is the filter that determines the emojis and the original member
     const filter =  (reaction, user) => {
-        return ['🔵', '🔴', '🟠', '🟣', '✔️'].includes(reaction.emoji.name) && user.id === player.id; 
+        return ['🔵', '🔴', '🟠', '🟣', '🟤', '✔️'].includes(reaction.emoji.name) && user.id === player.id; 
     };
     
     //This waits for a reaction by using the emoji and user from the filter
@@ -171,6 +172,33 @@ module.exports.run = async (bot, message, args, player, channel) => {
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Stellaris")).catch(console.error)
             .then(communities.run(bot, communitiesMessage, "loop", player, channel))
         }
+
+        //7 Days to Die
+        if(latestReaction.emoji.name === '🟤' && !player.roles.cache.some(role => role.name === '7 Days to Die')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
+
+            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "7 Days to Die")).catch(console.error)
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }
+
+        if(latestReaction.emoji.name === '🟤' && player.roles.cache.some(role => role.name === '7 Days to Die')) {
+            try {
+                for (const reaction of userReactions.values()) {
+                    await reaction.users.remove(player.id)
+                }
+            } catch (error) {
+                console.error('Failed to remove reactions.')
+            }
+
+            player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "7 Days to Die")).catch(console.error)
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+        }        
 
         //If the user reacts to this, deletes the message
         if(latestReaction.emoji.name === '✔️') {
