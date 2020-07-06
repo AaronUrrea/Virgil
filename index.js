@@ -94,7 +94,7 @@ client.on('guildMemberRemove', async (member) => {
     
     client.channels.cache.get('728413318804406333').send(new Discord.MessageEmbed()
         .setColor('#8B0000')
-        .setTitle(member.user.username + ` has disembarked!`)
+        .setTitle((player.nickname == null ? player.user.username : player.nickname) + ` has disembarked!`)
         .attachFiles(['./attachments/UNSC.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
         .setThumbnail(member.user.avatarURL()))
