@@ -20,7 +20,7 @@ module.exports.run = async(bot, args, player, channel) => {
         .setTitle('111th Manticore Company')
         .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
-        .setDescription('Welcome ' + player.user.username + ' to the 111th Manticore Company! We are a Gaming Community,' + 
+        .setDescription('Welcome ' + `<@${player.id}>` + ' to the 111th Manticore Company! We are a Gaming Community,' + 
                         ' focused primarily on Arma 3 within the Halo universe. Besides our main Arma 3 server, we offer a community' +
                         ' for other games, such as Arma 3 Antisasi/Zombies and Stellaris! We hope you enjoy your stay within our community!')
 	    .addFields(

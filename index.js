@@ -74,7 +74,7 @@ client.on('guildMemberAdd', async (member) => {
     
     client.channels.cache.get('728413318804406333').send(new Discord.MessageEmbed()
         .setColor('#228B22')
-        .setTitle(member.user.username + ` has just docked!`)
+        .setDescription(`**<@${member.id}> has just docked!**`)
         .attachFiles(['./attachments/UNSC.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
         .setThumbnail(member.user.avatarURL()))
@@ -94,7 +94,7 @@ client.on('guildMemberRemove', async (member) => {
     
     client.channels.cache.get('728413318804406333').send(new Discord.MessageEmbed()
         .setColor('#8B0000')
-        .setTitle((member.nickname == null ? member.user.username : member.nickname) + ` has disembarked!`)
+        .setDescription(`**<@${member.id}> has disembarked.**`)
         .attachFiles(['./attachments/UNSC.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
         .setThumbnail(member.user.avatarURL()))

@@ -8,16 +8,11 @@ module.exports.run = async (bot, message, args, player, channel) => {
     let sentHelp = await message.channel.send(new Discord.MessageEmbed()
         .setColor('#ff9900')
         .setTitle('111th Manticore Company')
-        .setDescription(`<@${player.id}>` + ', you can use the following commands below:')
+        .setDescription(`<@${player.id}>` + ', this is a test using mentions')
         .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
         .setThumbnail('attachment://Manticore.png')
         .addFields(
-            { name: '?info', value: 'Accesses the info panel of the server.' },
-            { name: '?gallery', value: 'Accesses the gallery of the server.' },
-            { name: '?rules', value: 'Accesses the rule panel of the server.' },
-            { name: '?communities', value: 'Allows you to change your "communities" roles.' },
-            { name: '?suggestion', value: 'Allows you to suggest an idea to the community.\nFor more info, type "?suggestion help"'},
             { name: "\u200B", value: 'Click [✖] to exit.' +
             '\nThis message will auto-delete in 1 minute.'}))
         
@@ -42,5 +37,5 @@ module.exports.run = async (bot, message, args, player, channel) => {
 }
 
 module.exports.config = {
-    name: "help"
+    name: "test"
 }

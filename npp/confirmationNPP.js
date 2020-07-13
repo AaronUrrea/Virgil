@@ -13,7 +13,7 @@ module.exports.run = async (bot, args, player, channel) => {
         .setTitle('111th Manticore Company')
         .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
-        .setDescription('Are you sure you do not want to join the 11th Manticore Company?')
+        .setDescription('Are you sure you do not want to join the 11th Manticore Company ' + `<@${player.id}>?`)
         .setThumbnail('attachment://Manticore.png')
 	    .addFields(
             { name: ('You can change your mind at anytime by contacting me or any @Recruiter after these initial checks?\n'),  

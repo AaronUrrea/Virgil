@@ -12,7 +12,7 @@ module.exports.run = async (bot, args, player, channel) => {
         .setTitle('111th Manticore Company')
         .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
-        .setDescription('Before you are ready to jump in, you need to read the ground rules of the server.')
+        .setDescription('Before you are ready to jump in, you need to read the ground rules of the server ' + `<@${player.id}>.`)
         .setThumbnail('attachment://Manticore.png')
         .addFields(
             { name: 'Discord Rules', value: '1. Be respectful of others. Know when to stop with table talk.\n' +
@@ -58,7 +58,7 @@ module.exports.run = async (bot, args, player, channel) => {
     setTimeout( () => {
         rulesMessage.react('🔜')
         .then(console.log("Finish reaction created"));
-    }, 60000);
+    }, 5000); //CORRECT TO 60000 AFTER TESTING
 
     //This is the filter that determines the emojis and the original member
     const filter = (reaction, user) => {
@@ -74,14 +74,14 @@ module.exports.run = async (bot, args, player, channel) => {
         //If the player accepts, redirects to communities
         if(reaction.emoji.name === '🔜'){
             rulesMessage.delete()
-            .then(communities.run(bot, '', args, player, channel))
+            .then(communities.run(bot, '', args, player, channel, ''))
         }
     })
     .catch(collected => {
 
         //If the player times out, redirects to communities
         rulesMessage.delete()
-        .then(communities.run(bot, '', args, player, channel))
+        .then(communities.run(bot, '', args, player, channel, ''))
     });
     
 

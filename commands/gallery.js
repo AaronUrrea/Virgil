@@ -21,7 +21,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
                 .setDescription('Permission granted, ' + 
-                    (player.nickname == null ? player.user.username : player.nickname) +
+                    `<@${player.id}>` +
                     '.\nAccessing Gallery Now . . .')
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
@@ -33,7 +33,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
                 .setColor('#ff9900')
                 .setTitle('111th Manticore Company')
                 .setDescription('Permission granted, ' + 
-                    (player.nickname == null ? player.user.username : player.nickname) +
+                    `<@${player.id}>` +
                     '.\nAccessing Gallery Now . . .')
                 .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
                 .setAuthor('UNSC', 'attachment://UNSC.png')
@@ -58,7 +58,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             new Discord.MessageEmbed()
                                       .setColor('#ff9900')
                                       .setTitle('111th Manticore Company')
-                                      .setDescription((player.nickname == null ? player.user.username : player.nickname) + 
+                                      .setDescription(`<@${player.id}>` + 
                                                      (args === 'info' ? ', Click [🔙] to return to info.' : ', Click [✖] to exit.') +
                                                      '\nThis message will auto-delete in 5 Minutes.')
                                       .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])

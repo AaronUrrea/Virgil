@@ -8,7 +8,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         .setTitle('111th Manticore Company')
         .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
-        .setDescription('Before you are ready to jump in, you need to read the ground rules of the server.')
+        .setDescription('Before you are ready to jump in, you need to read the ground rules of the server ' + `<@${player.id}>.`)
         .setThumbnail('attachment://Manticore.png')
         .addFields(
             { name: 'Discord Rules', value: '1. Be respectful of others. Know when to stop with table talk.\n' +
@@ -44,7 +44,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
                                             '3. No Blue on Blue.\n' +
                                             '4. Listen to the Zeus ' }, //: { name: '\u200B', value : '\u200B'} ),   
 
-            { name: ('\u200B'),  
+            { name: ('You may advance by clicking [🔜].'),  
                     value : '\nThis message will auto-resolve after 5 minutes of inactivity.' })
 
     const rulesMessage = await channel.send(rulesEmbed);

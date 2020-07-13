@@ -4,26 +4,16 @@ const config = require('../config.json');
 //These are the possible files they can choose to execute
 const communities = require('./communitiesNPP.js')
 
-module.exports.run = async (bot, message, args, player, channel) => {
-  
-    //If the user decided to not join Manticore
-    if(args === 'marine'){
-        player.roles.add(player.guild.roles.cache.get("725094694173933599")); //Add Squad
-        player.roles.add(player.guild.roles.cache.get("725196526653014018")); //Add Awaiting Placement
+module.exports.run = async (bot, message, args, player, channel, role) => {
 
-        //Here we try to add the Prefix [RCT] to the user name
-        //  I set the name to be cut off after 25 characters, as to fit the [RCT] in
+    
+    if(args === 'marine'){ 
+        role = args;
         player.setNickname("[RCT] " + player.user.username.toString().substring(0, 25))
         .catch(error => {
-            console.log("Name too long, skipping...") })
-        .then(bot.channels.cache.get("725412224440598598").send(
-            `**All hands on deck**, <@&${"725409624236490784"}>, we have a new Recruit awaiting placement! *${player.user.username}*`))
-    }
+            console.log("Name too long, skipping...") }) } 
+    else if(args === 'civilian') role = args
 
-    //If the user decided to be a civilian
-    else if(args === 'civilian'){
-        player.roles.add(player.guild.roles.cache.get("725098084949950519")); //Add Civilian
-    }
 
     //Creates communitiesEmbed to be sent
     communitiesEmbed = new Discord.MessageEmbed()
@@ -37,8 +27,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         .setThumbnail('attachment://Manticore.png')
 	    .addFields(
             { name: '\u200B', value: '\u200B' },
-            { name: ((player.nickname == null ? player.user.username : player.nickname) + 
-                    ', feel free to choose the communities you would like to subscribe to!\n'),
+            { name: ('Feel free to choose the communities you would like to subscribe to!\n'),
                     value: 'When you are complete, click [✔️] to advance to the rules.\n'+
                     'To remove a role, simply press the same button again!\n'+
                     '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n[🟤] for 7 Days to Die.\n '+
@@ -95,7 +84,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
 
         if(latestReaction.emoji.name === '🔵' && player.roles.cache.some(role => role.name === 'Halo')) {
@@ -108,7 +97,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
         
         //Antistasi
@@ -123,7 +112,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Antistasi")).catch(console.error)
             
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
 
         if(latestReaction.emoji.name === '🔴' && player.roles.cache.some(role => role.name === 'Antistasi')) {
@@ -136,7 +125,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Antistasi")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
 
         //Zombies
@@ -150,7 +139,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Zombies")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
 
         if(latestReaction.emoji.name === '🟠' && player.roles.cache.some(role => role.name === 'Zombies')) {
@@ -163,7 +152,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Zombies")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
 
         //Stellaris
@@ -177,7 +166,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Stellaris")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
 
         if(latestReaction.emoji.name === '🟣' && player.roles.cache.some(role => role.name === 'Stellaris')) {
@@ -190,7 +179,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "Stellaris")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
 
         //7 Days to Die
@@ -204,7 +193,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "7 Days to Die")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
 
         if(latestReaction.emoji.name === '🟤' && player.roles.cache.some(role => role.name === '7 Days to Die')) {
@@ -217,23 +206,39 @@ module.exports.run = async (bot, message, args, player, channel) => {
             }
 
             player.roles.remove(communitiesMessage.guild.roles.cache.find(role => role.name === "7 Days to Die")).catch(console.error)
-            .then(communities.run(bot, communitiesMessage, "loop", player, channel))
+            .then(communities.run(bot, communitiesMessage, "loop", player, channel, role))
         }
-
-
-
-
-
-
 
         //Finished with adding roles
         if(latestReaction.emoji.name === '✔️') {
-            //Deletes the message, and then remove the Visitor role
-            communitiesMessage.delete()
-            .then(player.roles.remove(player.guild.roles.cache.get("717530067844202566"))) //Remove Visitor
-            .then(console.log("Mission accomplished, they're on their way."))
+            //If the user decided to not join Manticore
+            if(role === 'marine'){
+                player.roles.add(player.guild.roles.cache.get("725094694173933599")); //Add Squad
+                player.roles.add(player.guild.roles.cache.get("725196526653014018")); //Add Awaiting Placement
 
-            if(args === 'marine' && !player.roles.cache.some(role => role.name === 'Halo')){
+                //Here we try to add the Prefix [RCT] to the user name
+                //  I set the name to be cut off after 25 characters, as to fit the [RCT] in
+                bot.channels.cache.get("725412224440598598").send(
+                `**All hands on deck**, <@&${"725409624236490784"}>, we have a new Recruit awaiting placement! <@${player.id}>`)
+
+
+                 //Deletes the message, and then remove the Visitor role
+                communitiesMessage.delete()
+                .then(player.roles.remove(player.guild.roles.cache.get("717530067844202566"))) //Remove Visitor
+                .then(console.log("Mission accomplished, they're on their way."))
+            }
+
+            //If the user decided to be a civilian
+            else if(role === 'civilian'){
+                player.roles.add(player.guild.roles.cache.get("725098084949950519")); //Add Civilian
+
+                //Deletes the message, and then remove the Visitor role
+                communitiesMessage.delete()
+                .then(player.roles.remove(player.guild.roles.cache.get("717530067844202566"))) //Remove Visitor
+                .then(console.log("Mission accomplished, they're on their way."))
+            }
+
+            if(role === 'marine' && !player.roles.cache.some(role => role.name === 'Halo')){
                 player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
             }
         }

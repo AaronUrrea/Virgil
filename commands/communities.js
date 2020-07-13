@@ -17,8 +17,7 @@ module.exports.run = async (bot, message, args, player, channel) => {
         .setThumbnail('attachment://Manticore.png')
 	    .addFields(
             { name: '\u200B', value: '\u200B' },
-            { name: ((player.nickname == null ? player.user.username : player.nickname) + 
-                    ', feel free to choose the communities you would like to subscribe to!\n'),
+            { name: ('Feel free to choose the communities you would like to subscribe to!\n'),
                     value: 'When you are complete, click [✔️] to advance to the rules.\n'+
                     'To remove a role, simply press the same button again!\n'+
                     '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n[🟤] for 7 Days to Die.\n '+
