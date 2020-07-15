@@ -6,7 +6,7 @@ const communities = require('./communitiesNPP.js')
 
 module.exports.run = async (bot, message, args, player, channel, role) => {
 
-    
+    //Does a check whether they want to be a marine or civilian, assigning it to role, as args is overridden by 'loop'
     if(args === 'marine'){ 
         role = args;
         player.setNickname("[RCT] " + player.user.username.toString().substring(0, 25))
@@ -216,11 +216,9 @@ module.exports.run = async (bot, message, args, player, channel, role) => {
                 player.roles.add(player.guild.roles.cache.get("725094694173933599")); //Add Squad
                 player.roles.add(player.guild.roles.cache.get("725196526653014018")); //Add Awaiting Placement
 
-                //Here we try to add the Prefix [RCT] to the user name
-                //  I set the name to be cut off after 25 characters, as to fit the [RCT] in
+                //Send a message to recruiters informing them of a new recruit
                 bot.channels.cache.get("725412224440598598").send(
                 `**All hands on deck**, <@&${"725409624236490784"}>, we have a new Recruit awaiting placement! <@${player.id}>`)
-
 
                  //Deletes the message, and then remove the Visitor role
                 communitiesMessage.delete()
@@ -245,10 +243,35 @@ module.exports.run = async (bot, message, args, player, channel, role) => {
     })
     .catch(collected => {
 
-        //Deletes the message, and then remove the Visitor role
-        communitiesMessage.delete()
-        .then(player.roles.remove(player.guild.roles.cache.get("717530067844202566"))) //Remove Visitor
-        .then(console.log("Mission accomplished, they're on their way."))
+        //If the user decided to not join Manticore
+        if(role === 'marine'){
+            player.roles.add(player.guild.roles.cache.get("725094694173933599")); //Add Squad
+            player.roles.add(player.guild.roles.cache.get("725196526653014018")); //Add Awaiting Placement
+
+            //Send a message to recruiters informing them of a new recruit
+            bot.channels.cache.get("725412224440598598").send(
+            `**All hands on deck**, <@&${"725409624236490784"}>, we have a new Recruit awaiting placement! <@${player.id}>`)
+
+            //Deletes the message, and then remove the Visitor role
+            communitiesMessage.delete()
+            .then(player.roles.remove(player.guild.roles.cache.get("717530067844202566"))) //Remove Visitor
+            .then(console.log("Mission accomplished, they're on their way."))
+        }
+
+        //If the user decided to be a civilian
+        else if(role === 'civilian'){
+            player.roles.add(player.guild.roles.cache.get("725098084949950519")); //Add Civilian
+
+             //Deletes the message, and then remove the Visitor role
+            communitiesMessage.delete()
+            .then(player.roles.remove(player.guild.roles.cache.get("717530067844202566"))) //Remove Visitor
+            .then(console.log("Mission accomplished, they're on their way."))
+        }
+
+        if(role === 'marine' && !player.roles.cache.some(role => role.name === 'Halo')){
+            player.roles.add(communitiesMessage.guild.roles.cache.find(role => role.name === "Halo")).catch(console.error)
+        }
+    
     });
 }
 
