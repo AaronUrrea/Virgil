@@ -139,9 +139,10 @@ client.on('message', message =>{
 
     //If it's not in #requests, but does have the prefix
     else if(cmd.charAt(0) === prefix && message.channel.id != "728382898574458920"){
-        wrongChannel(message)
-        .then(message.delete())
-        .catch("Message delete failure")
+        return
+        //wrongChannel(message)
+        //.then(message.delete())
+        //.catch("Message delete failure")
     }    
 
     //If it is in #requests, but doesn't have a prefix
