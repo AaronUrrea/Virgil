@@ -69,7 +69,7 @@ fs.readdir('./npp', (err, files) =>{
 client.on('guildMemberAdd', async (member) => {
     client.channels.cache.get('728413318804406333').send(new Discord.MessageEmbed()
         .setColor('#228B22')
-        .setDescription(`**<@${member.user.username}> has just docked!**`)
+        .setDescription(`**${member.user.tag} has just docked!**\n\nEmbed/ID: <@${member.id}>`)
         .attachFiles(['./attachments/UNSC.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
         .setThumbnail(member.user.avatarURL()))
@@ -90,7 +90,7 @@ client.on('guildMemberRemove', async (member) => {
 
     client.channels.cache.get('728413318804406333').send(new Discord.MessageEmbed()
         .setColor('#8B0000')
-        .setDescription(`**<@${member.user.username}> has disembarked.**`)
+        .setDescription(`**${member.user.tag} has disembarked.**\n\nEmbed/ID: <@${member.id}>`)
         .attachFiles(['./attachments/UNSC.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
         .setThumbnail(member.user.avatarURL()))
