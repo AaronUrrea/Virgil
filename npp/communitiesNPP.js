@@ -21,13 +21,12 @@ module.exports.run = async (bot, message, args, player, channel, role) => {
         .setTitle('111th Manticore Company')
         .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
-        .setDescription('Besides the prominent Halo community we have here, we also have some side communities, such as Stellaris' +
+        .setDescription(`Besides the prominent Halo community we have here, we also have some side communities, such as Stellaris' +
         ', Arma 3 Antistasi, and Arma 3 Zombies. You can also suggest adding communities, and if there is enough support, we can' +
-        ' add that game to our community!')
+        ' add that game to our community!\n\n<@${player.id}>, pick from the communities below.`)
         .setThumbnail('attachment://Manticore.png')
 	    .addFields(
-            { name: '\u200B', value: '\u200B' },
-            { name: ('Feel free to choose the communities you would like to subscribe to!\n'),
+            { name: ('\u200B'),
                     value: 'When you are complete, click [✔️] to advance to the rules.\n'+
                     'To remove a role, simply press the same button again!\n'+
                     '[🔵] for Halo.\n[🔴] for Antistasi.\n[🟠] for Zombies.\n[🟣] for Stellaris.\n[🟤] for 7 Days to Die.\n '+

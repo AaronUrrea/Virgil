@@ -43,7 +43,7 @@ module.exports.run = async(bot, message, args, player, channel) => {
         for(i = 0; i < args.length; i++){
             suggest+=(args[i].toString() + " ");
         }
-
+        
         let suggestion = await message.channel.send(new Discord.MessageEmbed()
         .setColor('#ff9900')
         .setTitle('111th Manticore Company')
@@ -69,20 +69,23 @@ module.exports.run = async(bot, message, args, player, channel) => {
             const reaction = collected.first();
 
             if(reaction.emoji.name === '✔️'){
-                let result = await bot.channels.cache.get("728505413682856038").send(new Discord.MessageEmbed()
-                    .setColor('#ff9900')
-                    .setTitle('111th Manticore Company')
-                    .setDescription(`<@${player.id}>` + ' suggests:')
-                    .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
-                    .setAuthor('UNSC', 'attachment://UNSC.png')
-                    .setThumbnail('attachment://Manticore.png') 
-                    .addFields(
-                        { name: '"' + suggest + '"', value: '\u200B' } ))
-                await result.react('✅')
-                await result.react('❌')
+                bot.channels.cache.get("728505413682856038").send(`**Attention @everyone!** We have a new suggestion from <@${(player.id)}>!`)
+                .then(async () => {
+                    let result = await bot.channels.cache.get("728505413682856038").send(new Discord.MessageEmbed()
+                        .setColor('#ff9900')
+                        .setTitle('111th Manticore Company')
+                        .setDescription(`<@${player.id}>` + ' suggests:')
+                        .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
+                        .setAuthor('UNSC', 'attachment://UNSC.png')
+                        .setThumbnail('attachment://Manticore.png') 
+                        .addFields(
+                            { name: '"' + suggest + '"', value: '\u200B' } ))
+                    await result.react('✅')
+                    await result.react('❌')
                 
-                await suggestion.delete()
-            
+                    await suggestion.delete()
+                })
+                .catch(console.log("Error at sending suggestion"))
             }
 
             else if(reaction.emoji.name === '✖'){

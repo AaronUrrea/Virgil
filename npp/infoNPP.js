@@ -14,7 +14,7 @@ module.exports.run = async (bot, args, player, channel) => {
         .setTitle('111th Manticore Company')
         .attachFiles(['./attachments/UNSC.png', './attachments/Manticore.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
-        .setDescription('We are a gaming community that primarily focuses on Halo Operations in Arma 3.' +
+        .setDescription(`<@${player.id}>, we are a gaming community that primarily focuses on Halo Operations in Arma 3.` +
                         'We also do a variety of operations that cycle throughout the weeks. Currently, we have:')
         .setThumbnail('attachment://Manticore.png')
 	    .addFields(
