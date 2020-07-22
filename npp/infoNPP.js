@@ -20,7 +20,7 @@ module.exports.run = async (bot, args, player, channel) => {
 	    .addFields(
             { name: 'Marine Division', value: '"Hoplite"', inline: true },
             { name: 'Scout Divisions', value: '"Pathfinder" & "Chisel"', inline: true },
-            { name: 'Air Division', value: '"Black Dragon"', inline: true },
+            { name: 'Air Division', value: '"Viper"', inline: true },
             { name: 'Armor Division', value: '"Titan"', inline: true },
             { name: 'ODST  Division', value: '"Wyvern"', inline: true },
             { name: 'Talk to your @Recruiter today to see which slots are avaliable!', value: '\u200B'},
