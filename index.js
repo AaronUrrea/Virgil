@@ -89,7 +89,7 @@ client.on('guildMemberRemove', async (member) => {
     let name = member.id;
 
     client.channels.cache.get('728413318804406333').send(new Discord.MessageEmbed()
-        .setColor('#8B0000')
+        .setColor('#8b0000')
         .setDescription(`**${member.user.tag} has disembarked.**\n\nEmbed/ID: <@${member.id}>`)
         .attachFiles(['./attachments/UNSC.png'])
         .setAuthor('UNSC', 'attachment://UNSC.png')
@@ -117,9 +117,19 @@ client.on('message', message =>{
     //While I'm testing the bot, if they don't have Admin priveleges, they can't send commands
     //if(!message.member.permissions.toArray().includes("ADMINISTRATOR")) return;
 
-    console.log("[" + 
-                (message.member.nickname == null ? message.member.user.username : message.member.nickname)  
-                +" @ " + message.channel.name + "]: " + message.toString());
+    var toLog = ("[" + getToday() + "] " +
+        (message.member.nickname == null ? message.member.user.username : message.member.nickname)
+        +" @ " + message.channel.name + ": " + message.toString());
+
+    console.log(toLog);
+
+
+    var toWrite = setLogFile();
+
+    console.log(toWrite);
+    fs.appendFile('./logs/' + toWrite, toLog + "\n", function (err) {
+        if (err) throw console.log(err);
+    });
 
     //lets say message.content = "?add halo please"
     let prefix = config.PREFIX; //Copies prefix to a local variable
@@ -130,17 +140,16 @@ client.on('message', message =>{
     //console.log("test: " + messageArray.toString()[0])
 
     //Boolean as to whether the command exists
-    let commandFile = client.commands.get(cmd.slice(prefix.length)); 
+    let commandFile = client.commands.get(cmd.slice(prefix.length));
 
     //If the first letter isnt prefix, and its not in #requests
-    if(cmd.charAt(0) != prefix && message.channel.id != "728382898574458920") return
+    if(cmd.charAt(0) !== prefix && message.channel.id != "728382898574458920");
 
     //If it's not in #requests, but does have the prefix
     else if(cmd.charAt(0) === prefix && message.channel.id != "728382898574458920"){
-        return
-        //wrongChannel(message)
-        //.then(message.delete())
-        //.catch("Message delete failure")
+        wrongChannel(message)
+        .then(message.delete())
+        .catch("Message delete failure")
     }    
 
     //If it is in #requests, but doesn't have a prefix
@@ -165,7 +174,7 @@ client.on('message', message =>{
         .then(message.delete())
         .catch("Message delete failure")
     }        
-    
+
 });
 
 async function wrongChannel(message) {
@@ -187,6 +196,31 @@ async function onlyCommands(message) {
     .then(setTimeout(async () => {
         await reply.delete();
     }, 5000))
+}
+
+function getToday(){
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    var h = String(today.getHours()).padStart(2, '0');
+    var m = String(today.getMinutes()).padStart(2, '0');
+    var s = String(today.getSeconds()).padStart(2, '0');
+
+    today = mm + '/' + dd + '/' + yyyy + ' @ ' + h + ':' +m + ':'  + s;
+    return today;
+}
+
+function setLogFile(){
+    var today = new Date();
+
+    var dd = String(today.getDate()).padStart(2, '0');
+
+    var months = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+
+    return months[today.getMonth()] + " " + dd + ".txt";
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

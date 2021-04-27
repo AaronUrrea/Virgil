@@ -1,4 +1,5 @@
 {
     "PREFIX" : "?",
-    "TOKEN" : "NzI2NTMxOTI0NzgwMTIyMTc0.Xvjr4g.-WWps78di8mcXx4fVYgvriQZNkc"
+    "TOKEN" : "ODM2NDIzMzg0NTY4MTY4NDUw.YIdx-g.Q9JneaRK9XVQoyfFXxSBrG1GBzc",
+    "INVITE" : "https://discord.com/oauth2/authorize?client_id=[client_id]&scope=bot"
 }
